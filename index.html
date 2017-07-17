@@ -1,13 +1,194 @@
+<!doctype html>
+<html lang="it">
 <head>
-<title> SmokeGL </title>
+	<title>Candela</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+	<link rel=stylesheet href="css/base.css"/>
 </head>
-
 <body>
-<h1> Test </h1>
-<ul>
-	<li>test</li>
-	<li>test</li>
-	<li>test</li>
-	<li>test</li>
-</ul>
+
+<!-- <script src="js/three_new.js"></script> -->
+<script src="js/Three.js"></script>
+
+<script src="js/Detector.js"></script>
+<script src="js/Stats.js"></script>
+<script src="js/OrbitControls.js"></script>
+<script src="js/THREEx.KeyboardState.js"></script>
+<script src="js/THREEx.FullScreen.js"></script>
+<script src="js/THREEx.WindowResize.js"></script>
+
+<script src="js/ParticleEngine.js"></script>
+<script src="js/ParticleEngineExamples.js"></script>
+
+<script src="js/loaders/MTLLoader.js"></script>
+<script src="js/loaders/OBJLoader.js"></script>
+
+<script type='text/javascript' src='js/DAT.GUI.min.js'></script>
+
+
+<div id="ThreeJS" style="position: absolute; left:0px; top:0px"></div>
+<script>
+
+// MAIN
+
+// standard global variables
+var container, scene, camera, renderer, controls, stats;
+var keyboard = new THREEx.KeyboardState();
+var clock = new THREE.Clock();
+// custom global variables
+var cube;
+
+init();
+animate();
+
+// FUNCTIONS 		
+function init() 
+{
+	// SCENE
+	scene = new THREE.Scene();
+	// CAMERA
+	var SCREEN_WIDTH = window.innerWidth, SCREEN_HEIGHT = window.innerHeight;
+	var VIEW_ANGLE = 45, ASPECT = SCREEN_WIDTH / SCREEN_HEIGHT, NEAR = 2, FAR = 5000;
+	camera = new THREE.PerspectiveCamera( VIEW_ANGLE, ASPECT, NEAR, FAR);
+	scene.add(camera);
+	camera.position.set(0,200,400);
+	camera.lookAt(scene.position);	
+	// RENDERER
+	if ( Detector.webgl ) //Noi bisogna usare WebGL
+		renderer = new THREE.WebGLRenderer( {antialias:true} );
+	else
+		renderer = new THREE.CanvasRenderer(); 
+	renderer.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
+	container = document.getElementById( 'ThreeJS' );
+	container.appendChild( renderer.domElement );
+	// EVENTS
+	THREEx.WindowResize(renderer, camera);
+	THREEx.FullScreen.bindKey({ charCode : 'f'.charCodeAt(0) }); // Va fullscreen se si preme f
+	// CONTROLS
+	controls = new THREE.OrbitControls( camera, renderer.domElement );
+	// STATS
+	stats = new Stats();
+	stats.domElement.style.position = 'absolute';
+	stats.domElement.style.bottom = '0px';
+	stats.domElement.style.zIndex = 100;
+	container.appendChild( stats.domElement );
+	// LIGHT
+	var light = new THREE.PointLight(0xffffff);
+	light.position.set(0,250,0);
+	scene.add(light);
+	// FLOOR
+	var floorTexture = new THREE.ImageUtils.loadTexture( 'images/table.jpg' );
+	floorTexture.wrapS = floorTexture.wrapT = THREE.RepeatWrapping; //forse meglio qualcos'altro e trovare un'immagine piu ad alta risoluzione
+	floorTexture.repeat.set( 10, 10 );
+	var floorMaterial = new THREE.MeshBasicMaterial( { color: 0xCCCCCC, map: floorTexture, side: THREE.DoubleSide } ); // Colore sul pavimento
+	var floorGeometry = new THREE.PlaneGeometry(1000, 1000, 10, 10);
+	var floor = new THREE.Mesh(floorGeometry, floorMaterial);
+	floor.position.y = -10.5;
+	floor.rotation.x = Math.PI / 2;
+	scene.add(floor);
+	// SKYBOX/FOG
+	var skyBoxGeometry = new THREE.CubeGeometry( 4000, 4000, 4000 );
+	var skyBoxMaterial = new THREE.MeshBasicMaterial( { color: 0x000000, side: THREE.BackSide } );
+	var skyBox = new THREE.Mesh( skyBoxGeometry, skyBoxMaterial );
+    scene.add(skyBox);
+
+    //Add Candle Object
+ //    console.log("Inserting obj")
+ //    var manager = new THREE.LoadingManager();
+ //    manager.onProgress = function ( item, loaded, total ) {
+	// 	console.log( item, loaded, total );
+	// };
+	// var mtlLoader = new THREE.MTLLoader(manager);
+	// mtlLoader.setPath( 'obj/' );
+	// mtlLoader.load( 'CandleStick.mtl', function( materials ) {
+	// 	materials.preload();
+	// 	var objLoader = new THREE.OBJLoader(manager);
+	// 	objLoader.setMaterials( materials );
+	// 	objLoader.setPath( 'obj/' );
+	// 	objLoader.load( 'CandleStick.obj', function ( object ) {
+	// 		object.position.y = 0;
+	// 		object.position.x = 0;
+	// 		object.position.z = 0;
+	// 		object.scale.x = 20;
+ //            object.scale.y = 20;
+ //            object.scale.z = 20;
+	// 		scene.add( object );
+	// 	}, function(){}, function(){} );
+	// });
+
+	////////////
+	// CUSTOM //
+	////////////
+
+	
+	this.engine = new ParticleEngine();
+	engine.setValues( Examples.smoke );
+	engine.initialize();
+	
+	// GUI for experimenting with parameters
+	// Si metteranno qui i controlli sulle particelle
+	gui = new dat.GUI();	
+	parameters = 
+	{		
+		smoke:      function() { restartEngine( Examples.smoke      ); },			
+		candle:     function() { restartEngine( Examples.candle     ); },			
+	};
+
+	gui.add( parameters, 'smoke'      ).name("Smoke");
+	gui.add( parameters, 'candle'     ).name("Candle");
+	
+	gui.open();	
+}
+
+function animate() 
+{
+    requestAnimationFrame( animate );
+	render();		
+	update();
+}
+
+function restartEngine(parameters)
+{
+	resetCamera();
+	
+	engine.destroy();
+	engine = new ParticleEngine();
+	engine.setValues( parameters );
+	engine.initialize();
+}
+
+function resetCamera()
+{
+	// CAMERA
+	var SCREEN_WIDTH = window.innerWidth, SCREEN_HEIGHT = window.innerHeight;
+	var VIEW_ANGLE = 45, ASPECT = SCREEN_WIDTH / SCREEN_HEIGHT, NEAR = 0.1, FAR = 20000;
+	camera = new THREE.PerspectiveCamera( VIEW_ANGLE, ASPECT, NEAR, FAR);
+	//camera.up = new THREE.Vector3( 0, 0, 1 );
+	camera.position.set(0,200,400);
+	camera.lookAt(scene.position);	
+	scene.add(camera);
+	
+	controls = new THREE.OrbitControls( camera, renderer.domElement );
+	THREEx.WindowResize(renderer, camera);
+}
+
+
+function update()
+{	
+	controls.update();
+	stats.update();
+	
+	var dt = clock.getDelta();
+	engine.update( dt * 0.5 );	
+}
+
+function render() 
+{
+	renderer.render( scene, camera );
+}
+
+</script>
+
 </body>
+</html>
