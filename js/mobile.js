@@ -6,3 +6,8 @@ function mobile(){
 
 	return isMobile;
 }
+
+//Random value between range 
+function random_range(a,b){	
+	return (b-a)*Math.random() + a;	
+}

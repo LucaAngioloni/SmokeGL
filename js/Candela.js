@@ -43,8 +43,13 @@ function init()
     
     // LIGHT
     var light = new THREE.PointLight(0xffffff);
+    // light.position.set(100,250,100);
     light.position.set(0,250,0);
     scene.add(light);
+
+    var ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
+    scene.add(ambientLight);
+    
     // FLOOR
     var floorTexture = new THREE.TextureLoader().load( 'images/table.jpg' )
     //var floorTexture = new THREE.ImageUtils.loadTexture( 'images/table.jpg' );
@@ -53,7 +58,7 @@ function init()
     var floorMaterial = new THREE.MeshBasicMaterial( { color: 0xCCCCCC, map: floorTexture, side: THREE.DoubleSide } ); // Colore sul pavimento
     var floorGeometry = new THREE.PlaneGeometry(1000, 1000, 10, 10);
     var floor = new THREE.Mesh(floorGeometry, floorMaterial);
-    floor.position.y = -10.5;
+    floor.position.y = -5;
     floor.rotation.x = Math.PI / 2;
     scene.add(floor);
     // SKYBOX/FOG

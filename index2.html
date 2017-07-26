@@ -17,22 +17,50 @@
 
 <body>
 	<script type="x-shader/x-vertex" id="vertex_flame">
+		attribute vec3  customColor;
+		attribute float customOpacity;
+		attribute float customSize;
+		attribute float customAngle;
+		attribute float customVisible;
 
+		varying vec4  vColor;
+		varying float vAngle;
+
+		void main()
+		{
+			if ( customVisible > 0.5 )
+			vColor = vec4( customColor, customOpacity );
+			else
+			vColor = vec4(0.0, 0.0, 0.0, 0.0);
+			vAngle = customAngle;
+			vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
+			gl_PointSize = customSize * ( 300.0 / length( mvPosition.xyz ) );
+			gl_Position = projectionMatrix * mvPosition;
+		}
 	</script>
-
 	<script type="x-shader/x-vertex" id="vertex_smoke">
-
+		
 	</script>
-
 	<script type="x-shader/x-fragment" id="fragment_flame">
+		uniform sampler2D texture;
+		varying vec4 vColor;
+		varying float vAngle;
 
+		void main()
+		{
+			gl_FragColor = vColor;
+			float c = cos(vAngle);
+			float s = sin(vAngle);
+			vec2 rotatedUV = vec2(c * (gl_PointCoord.x - 0.5) + s * (gl_PointCoord.y - 0.5) + 0.5,
+			c * (gl_PointCoord.y - 0.5) - s * (gl_PointCoord.x - 0.5) + 0.5);
+			vec4 rotatedTexture = texture2D( texture,  rotatedUV );
+			gl_FragColor = gl_FragColor * rotatedTexture;
+		}
 	</script>
-
 	<script type="x-shader/x-fragment" id="fragment_smoke">
 
 	</script>
 
-	
 	<div id="WebGL" style="position: absolute; left:0px; top:0px"></div>
 	<script src="js/Candela.js"></script>
 
