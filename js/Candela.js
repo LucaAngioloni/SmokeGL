@@ -1,10 +1,10 @@
-
-var container, scene, camera, renderer, controls, stats;
-var keyboard = new THREEx.KeyboardState();
-var clock = new THREE.Clock();
-
 $(document).ready(function() {
+    var container, scene, camera, renderer, controls, stats;
+    var keyboard = new THREEx.KeyboardState();
+    var clock = new THREE.Clock();
+
     init();
+    render();
 });
 
 function init() 
@@ -21,10 +21,7 @@ function init()
     camera.lookAt(scene.position);
     
     // RENDERER
-    if ( Detector.webgl ) //Noi bisogna usare WebGL
-        renderer = new THREE.WebGLRenderer( {antialias:true} );
-    else
-        renderer = new THREE.CanvasRenderer(); 
+    renderer = new THREE.WebGLRenderer( {antialias:true} );
 
     renderer.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
     container = document.getElementById( 'WebGL' );
@@ -49,7 +46,8 @@ function init()
     light.position.set(0,250,0);
     scene.add(light);
     // FLOOR
-    var floorTexture = new THREE.ImageUtils.loadTexture( 'images/table.jpg' );
+    var floorTexture = new THREE.TextureLoader().load( 'images/table.jpg' )
+    //var floorTexture = new THREE.ImageUtils.loadTexture( 'images/table.jpg' );
     floorTexture.wrapS = floorTexture.wrapT = THREE.RepeatWrapping; //forse meglio qualcos'altro e trovare un'immagine piu ad alta risoluzione
     floorTexture.repeat.set( 10, 10 );
     var floorMaterial = new THREE.MeshBasicMaterial( { color: 0xCCCCCC, map: floorTexture, side: THREE.DoubleSide } ); // Colore sul pavimento
@@ -88,9 +86,39 @@ function init()
         }, function(){}, function(){} );
     });
 
-    // Init Particles
+    // Init Particles and load shaders
 
+    var flameGeometry = new THREE.BufferGeometry();
+    var smokeGeometry = new THREE.BufferGeometry();
 
+    // add attributes
+
+    var flameVertexShader = document.getElementById('vertex_flame').textContent;
+    var smokeVertexShader = document.getElementById('vertex_smoke').textContent;    
+
+    var flameFragmentShader = document.getElementById('fragment_flame').textContent;
+    var smokeFragmentShader = document.getElementById('fragment_smoke').textContent;    
+
+    var flameMaterial = new THREE.ShaderMaterial({
+            uniforms: {
+                texture: { type: 't', value: new THREE.TextureLoader().load("images/flame.png") }
+            },
+            vertexShader: flameVertexShader,
+            fragmentShader: flameFragmentShader,
+        });
+    var smokeMaterial = new THREE.ShaderMaterial({
+            uniforms: {
+                texture: { type: 't', value: new THREE.TextureLoader().load("images/smokeparticle.png") }
+            },
+            vertexShader: smokeVertexShader,
+            fragmentShader: smokeFragmentShader,
+        });
+
+    var flame = new THREE.Points(flameGeometry, flameMaterial);
+    var smoke = new THREE.Points(smokeGeometry, smokeMaterial);
+
+    scene.add(flame);
+    scene.add(smoke);
 
     // GUI
     
@@ -128,6 +156,15 @@ function init()
         //cabia particelle
     });
     
-    gui.open(); 
+    datGui.open(); 
+}
+
+
+function render() 
+{
+    stats.update();
+    controls.update();
+    renderer.render( scene, camera );
+    requestAnimationFrame(render);
 }
 

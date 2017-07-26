@@ -6,28 +6,17 @@
 	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 	<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
 	<link rel="icon" href="/favicon.ico" type="image/x-icon">
-	
+
 	<link rel=stylesheet href="css/base.css"/>
 
 	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+	<script src="js/mobile.js" type="text/javascript" charset="utf-8"></script>
 
-	<script src="js/Three.js"></script>
-
-	<script src="js/Detector.js"></script>
-	<script src="js/Stats.js"></script>
-	<script src="js/OrbitControls.js"></script>
-	<script src="js/THREEx.KeyboardState.js"></script>
-	<script src="js/THREEx.FullScreen.js"></script>
-	<script src="js/THREEx.WindowResize.js"></script>
-
-	<script src="js/loaders/MTLLoader.js"></script>
-	<script src="js/loaders/OBJLoader.js"></script>
-
-	<script type='text/javascript' src='js/DAT.GUI.min.js'></script>
+<!--	<script src="js/Three.js"></script> -->
 </head>
 
 <body>
-	<script type="x-shader/x-vertex" id="vertex_fire">
+	<script type="x-shader/x-vertex" id="vertex_flame">
 		attribute vec3  customColor;
 		attribute float customOpacity;
 		attribute float customSize;
@@ -52,7 +41,7 @@
 	<script type="x-shader/x-vertex" id="vertex_smoke">
 		
 	</script>
-	<script type="x-shader/x-fragment" id="fragment_fire">
+	<script type="x-shader/x-fragment" id="fragment_flame">
 		uniform sampler2D texture;
 		varying vec4 vColor;
 		varying float vAngle;
@@ -74,5 +63,29 @@
 
 	<div id="WebGL" style="position: absolute; left:0px; top:0px"></div>
 	<script src="js/Candela.js"></script>
+
+	<script src="js/three.min.js"></script>
+
+	<script src="js/Detector.js"></script>
+	<script src="js/Stats.js"></script>
+	<script src="js/THREEx.KeyboardState.js"></script>
+	<script src="js/THREEx.FullScreen.js"></script>
+	<script src="js/THREEx.WindowResize.js"></script>
+
+	<script src="js/loaders/MTLLoader.js"></script>
+	<script src="js/loaders/OBJLoader.js"></script>
+
+	<script type='text/javascript' src='js/DAT.GUI.min.js'>
+	</script>
+
+	<script>
+		if(mobile()){
+			console.log('Mobile Device');
+			document.write("<script src='js/OrbitControls-Touch.js'><\/script>");
+		} else{
+			console.log('Desktop Device');
+			document.write("<script src='js/OrbitControls.js'><\/script>");
+		}
+	</script>
 </body>
 </html>
