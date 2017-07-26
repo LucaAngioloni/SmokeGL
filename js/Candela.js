@@ -33,6 +33,8 @@ function init()
 
     // CONTROLS
     controls = new THREE.OrbitControls( camera, renderer.domElement );
+    controls.minDistance = 100;
+    controls.maxDistance = 500;
     
     // STATS
     stats = new Stats();
