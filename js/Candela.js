@@ -3,7 +3,10 @@ $(document).ready(function() {
     var keyboard = new THREEx.KeyboardState();
     var clock = new THREE.Clock();
 
+    //Configura la scena, inizializza gli shader, crea la GUI
     init();
+
+    //metodo che fa il render frame per frame.
     render();
 });
 
@@ -49,7 +52,7 @@ function init()
 
     var ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
     scene.add(ambientLight);
-    
+
     // FLOOR
     var floorTexture = new THREE.TextureLoader().load( 'images/table.jpg' )
     //var floorTexture = new THREE.ImageUtils.loadTexture( 'images/table.jpg' );
@@ -61,6 +64,7 @@ function init()
     floor.position.y = -5;
     floor.rotation.x = Math.PI / 2;
     scene.add(floor);
+
     // SKYBOX/FOG
     var skyBoxGeometry = new THREE.CubeGeometry( 4000, 4000, 4000 );
     var skyBoxMaterial = new THREE.MeshBasicMaterial( { color: 0x000000, side: THREE.BackSide } );
@@ -135,7 +139,7 @@ function init()
         this.SmokeDimension = 8.0
         this.SmokeOpacity = 0.5;
         this.Time_Steam = 2.5;
-    };
+    }; //Valori da cambiare una volta fatto lo shader
 
     datGui = new dat.GUI();  
 
@@ -167,9 +171,9 @@ function init()
 
 function render() 
 {
-    stats.update();
-    controls.update();
-    renderer.render( scene, camera );
-    requestAnimationFrame(render);
+    stats.update(); // aggiorna statistiche
+    controls.update(); //aggiorna i controlli della vista e camera
+    renderer.render( scene, camera ); //render del frame
+    requestAnimationFrame(render); //alla prossima necessità di render passo la funzione render stessa che viene chiamata come callback
 }
 
