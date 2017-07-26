@@ -179,3 +179,12 @@ function render()
     requestAnimationFrame(render); //alla prossima necessità di render passo la funzione render stessa che viene chiamata come callback
 }
 
+
+function createFlameParticles(){
+
+}
+
+function createSmokeParticles(){
+    
+}
+
