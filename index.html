@@ -17,19 +17,104 @@
 
 <body>
 	<script type="x-shader/x-vertex" id="vertex_flame">
+		uniform vec3  customColor;
+		uniform float customOpacity;
+		attribute float customSize;
+		attribute float customAngle;
+		attribute float timeOffset;
 
+
+		varying vec4  vColor;
+		varying float vAngle;
+
+		uniform float timeLife;
+		uniform float t;
+		uniform float speed;
+
+		void main()
+		{
+			vColor = vec4( customColor, customOpacity );
+		
+			vAngle = customAngle;
+			vec3 p = position; //posizione in x,y,z attuale
+			//Calcola la nuova posizione
+			if(t-timeOffset > 0.0){
+				p.x += (mod(t-timeOffset,timeLife))*cos(customAngle)*speed;
+				p.y += (mod(t-timeOffset,timeLife))*speed;
+				p.z += (mod(t-timeOffset,timeLife))*sin(customAngle)*speed;
+			}
+			vec4 mvPosition = modelViewMatrix * vec4( p, 1.0 );
+			gl_PointSize = customSize * ( 300.0 / length( mvPosition.xyz ) );
+			gl_Position = projectionMatrix * mvPosition;
+		}
 	</script>
 
 	<script type="x-shader/x-vertex" id="vertex_smoke">
+		uniform vec3  customColor;
+		uniform float customOpacity;
+		attribute float customSize;
+		attribute float customAngle;
+		attribute float timeOffset;
 
+		varying vec4  vColor;
+		varying float vAngle;
+
+		uniform float t;
+		uniform float timeLife;
+		uniform float speed;
+
+		void main()
+		{
+			vColor = vec4( customColor, customOpacity );
+		
+			vAngle = customAngle;
+			vec3 p = position; //posizione in x,y,z attuale
+			//Calcola la nuova posizione
+			if(t-timeOffset > 0.0){
+				p.x += (mod(t-timeOffset,timeLife))*cos(customAngle)*speed;
+				p.y += (mod(t-timeOffset,timeLife))*speed;
+				p.z += (mod(t-timeOffset,timeLife))*sin(customAngle)*speed;
+			}
+			vec4 mvPosition = modelViewMatrix * vec4( p, 1.0 );
+			gl_PointSize = customSize * ( 300.0 / length( mvPosition.xyz ) );
+			gl_Position = projectionMatrix * mvPosition;
+		}
 	</script>
 
 	<script type="x-shader/x-fragment" id="fragment_flame">
+		uniform sampler2D texture;
+		
+		varying vec4 vColor;
+		varying float vAngle;
 
+		void main()
+		{
+			gl_FragColor = vColor;
+			float c = cos(vAngle);
+			float s = sin(vAngle);
+			vec2 rotatedUV = vec2(c * (gl_PointCoord.x - 0.5) + s * (gl_PointCoord.y - 0.5) + 0.5,
+			c * (gl_PointCoord.y - 0.5) - s * (gl_PointCoord.x - 0.5) + 0.5);
+			vec4 rotatedTexture = texture2D( texture,  rotatedUV );
+			gl_FragColor = gl_FragColor * rotatedTexture;
+		}
 	</script>
 
 	<script type="x-shader/x-fragment" id="fragment_smoke">
+		uniform sampler2D texture;
+		
+		varying vec4 vColor;
+		varying float vAngle;
 
+		void main()
+		{
+			gl_FragColor = vColor;
+			float c = cos(vAngle);
+			float s = sin(vAngle);
+			vec2 rotatedUV = vec2(c * (gl_PointCoord.x - 0.5) + s * (gl_PointCoord.y - 0.5) + 0.5,
+			c * (gl_PointCoord.y - 0.5) - s * (gl_PointCoord.x - 0.5) + 0.5);
+			vec4 rotatedTexture = texture2D( texture,  rotatedUV );
+			gl_FragColor = gl_FragColor * rotatedTexture;
+		}
 	</script>
 
 	

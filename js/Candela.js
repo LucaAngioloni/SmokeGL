@@ -1,5 +1,9 @@
-$(document).ready(function() {
-    var container, scene, camera, renderer, controls, stats;
+
+var container, scene, camera, renderer, controls, stats, uniforms_flame, uniforms_smoke;
+var TTL = 3.5;
+var Speed = 10.0;
+
+$(document).ready(function(){
     var keyboard = new THREEx.KeyboardState();
     var clock = new THREE.Clock();
 
@@ -102,27 +106,67 @@ function init()
     var flameGeometry = new THREE.BufferGeometry();
     var smokeGeometry = new THREE.BufferGeometry();
 
-    // add attributes
+    // Generate initial particle positions
+    var flameData = createFlameParticles(40000);
+    var smokeData = createSmokeParticles(40000);
+
+    // add the position to the vertex shader
+    flameGeometry.addAttribute('position', new THREE.BufferAttribute(flameData.positions, 3));
+    flameGeometry.addAttribute('customSize', new THREE.BufferAttribute(flameData.sizes, 1));
+    flameGeometry.addAttribute('customAngle', new THREE.BufferAttribute(flameData.angles, 1));
+    flameGeometry.addAttribute('timeOffset', new THREE.BufferAttribute(flameData.timeOffsets, 1));
+    smokeGeometry.addAttribute('position', new THREE.BufferAttribute(smokeData.positions, 3));
+    smokeGeometry.addAttribute('customSize', new THREE.BufferAttribute(smokeData.sizes, 1));
+    smokeGeometry.addAttribute('customAngle', new THREE.BufferAttribute(smokeData.angles, 1));
+    smokeGeometry.addAttribute('timeOffset', new THREE.BufferAttribute(smokeData.timeOffsets, 1));
 
     var flameVertexShader = document.getElementById('vertex_flame').textContent;
     var smokeVertexShader = document.getElementById('vertex_smoke').textContent;    
 
     var flameFragmentShader = document.getElementById('fragment_flame').textContent;
-    var smokeFragmentShader = document.getElementById('fragment_smoke').textContent;    
+    var smokeFragmentShader = document.getElementById('fragment_smoke').textContent;
+
+    var flameColor = new Float32Array(3);
+    flameColor[0] = 255;
+    flameColor[1] = 0;
+    flameColor[2] = 0;
+
+    uniforms_flame = {
+        t: {value: 0.0},
+        texture: { type: 't', value: new THREE.TextureLoader().load("images/flame.png") },
+        customOpacity: {value: 1},
+        customColor: {value: flameColor},
+        timeLife: {value: TTL},
+        speed: {value: Speed},
+    };
+
+    var smokeColor = new Float32Array(3);
+    smokeColor[0] = 250;
+    smokeColor[1] = 250;
+    smokeColor[2] = 250;
+
+    uniforms_smoke = {
+        t: {value: 0.0},
+        texture: { type: 't', value: new THREE.TextureLoader().load("images/smokeparticle.png") },
+        customOpacity: {value: 1},
+        customColor: {value: smokeColor},
+        timeLife: {value: TTL},
+        speed: {value: Speed},
+    };   
 
     var flameMaterial = new THREE.ShaderMaterial({
-            uniforms: {
-                texture: { type: 't', value: new THREE.TextureLoader().load("images/flame.png") }
-            },
+            uniforms: uniforms_flame,
             vertexShader: flameVertexShader,
             fragmentShader: flameFragmentShader,
+            blending: THREE.AdditiveBlending,
+            transparent: true,
         });
     var smokeMaterial = new THREE.ShaderMaterial({
-            uniforms: {
-                texture: { type: 't', value: new THREE.TextureLoader().load("images/smokeparticle.png") }
-            },
+            uniforms: uniforms_smoke,
             vertexShader: smokeVertexShader,
             fragmentShader: smokeFragmentShader,
+            blending: THREE.AdditiveBlending,
+            transparent: true,
         });
 
     var flame = new THREE.Points(flameGeometry, flameMaterial);
@@ -133,7 +177,7 @@ function init()
 
     // GUI
     
-    var guiControls = new function () { 
+    var guiControls = new function (){ 
         this.FlameParticles = 1000;
         this.SmokeParticles = 1000;
         this.FlameDimension = 8.0;
@@ -171,8 +215,11 @@ function init()
 }
 
 
-function render() 
-{
+function render(){
+    //aggiorno tempo
+    uniforms_flame.t.value += 1.0/60.0;
+    uniforms_smoke.t.value += 1.0/60.0;
+
     stats.update(); // aggiorna statistiche
     controls.update(); //aggiorna i controlli della vista e camera
     renderer.render( scene, camera ); //render del frame
@@ -180,11 +227,60 @@ function render()
 }
 
 
-function createFlameParticles(){
+function createFlameParticles(n){
+    var pos = new Float32Array(n*3);
+    for (i=0; i < n; i++){
+        pos[i*3] = 0;
+        pos[i*3+1] = 100;
+        pos[i*3+2] = 0;
+    }
 
+    var siz = new Float32Array(n);
+
+    for (i=0; i < n; i++){
+        siz[i] = random_range(1,5);
+    }
+
+    var ang = new Float32Array(n);
+
+    for (i=0; i < n; i++){
+        ang[i] = random_range(0,7);
+    }
+
+    var to = new Float32Array(n);
+
+    for (i=0; i < n; i++){
+        to[i] = random_range(0,TTL);
+    }
+
+    return {positions: pos, sizes: siz, angles: ang, timeOffsets: to};
 }
 
-function createSmokeParticles(){
-    
+function createSmokeParticles(n){
+    var pos = new Float32Array(n*3);
+    for (i=0; i < n; i++){
+        pos[i*3] = 0;
+        pos[i*3+1] = 120;
+        pos[i*3+2] = 0;
+    }
+
+    var siz = new Float32Array(n);
+
+    for (i=0; i < n; i++){
+        siz[i] = random_range(1,5);
+    }
+
+    var ang = new Float32Array(n);
+
+    for (i=0; i < n; i++){
+        ang[i] = random_range(0,7);
+    }
+
+    var to = new Float32Array(n);
+
+    for (i=0; i < n; i++){
+        to[i] = random_range(0,TTL);
+    }
+    return {positions: pos, sizes: siz, angles: ang, timeOffsets: to};
 }
 
