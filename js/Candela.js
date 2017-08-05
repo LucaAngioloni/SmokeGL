@@ -127,9 +127,9 @@ function init()
     var smokeFragmentShader = document.getElementById('fragment_smoke').textContent;
 
     var flameColor = new Float32Array(3);
-    flameColor[0] = 255;
-    flameColor[1] = 0;
-    flameColor[2] = 0;
+    flameColor[0] = 1;
+    flameColor[1] = 1;
+    flameColor[2] = 1;
 
     uniforms_flame = {
         t: {value: 0.0},
@@ -141,9 +141,9 @@ function init()
     };
 
     var smokeColor = new Float32Array(3);
-    smokeColor[0] = 250;
-    smokeColor[1] = 250;
-    smokeColor[2] = 250;
+    smokeColor[0] = 1;
+    smokeColor[1] = 1;
+    smokeColor[2] = 1;
 
     uniforms_smoke = {
         t: {value: 0.0},
