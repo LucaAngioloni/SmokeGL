@@ -33,8 +33,6 @@
 
 		void main()
 		{
-			vColor = vec4( customColor, customOpacity );
-		
 			vAngle = customAngle;
 			vec3 p = position; //posizione in x,y,z attuale
 			//Calcola la nuova posizione
@@ -43,6 +41,13 @@
 				p.y += (mod(t-timeOffset,timeLife))*speed;
 				p.z += (mod(t-timeOffset,timeLife))*sin(customAngle)*speed;
 			}
+
+			// Cambia opacità in funzione dell'altezza
+			float frac_opacity = customOpacity / timeLife;
+			float opacity = customOpacity - (mod(t-timeOffset,timeLife))*frac_opacity;
+
+			vColor = vec4( customColor, opacity );
+
 			vec4 mvPosition = modelViewMatrix * vec4( p, 1.0 );
 			gl_PointSize = customSize * ( 300.0 / length( mvPosition.xyz ) );
 			gl_Position = projectionMatrix * mvPosition;
@@ -64,9 +69,7 @@
 		uniform float speed;
 
 		void main()
-		{
-			vColor = vec4( customColor, customOpacity );
-		
+		{		
 			vAngle = customAngle;
 			vec3 p = position; //posizione in x,y,z attuale
 			//Calcola la nuova posizione
@@ -75,6 +78,13 @@
 				p.y += (mod(t-timeOffset,timeLife))*speed;
 				p.z += (mod(t-timeOffset,timeLife))*sin(customAngle)*speed;
 			}
+
+			// Cambia opacità in funzione dell'altezza
+			float frac_opacity = customOpacity / timeLife;
+			float opacity = customOpacity - (mod(t-timeOffset,timeLife))*frac_opacity;
+
+			vColor = vec4( customColor, opacity );
+
 			vec4 mvPosition = modelViewMatrix * vec4( p, 1.0 );
 			gl_PointSize = customSize * ( 300.0 / length( mvPosition.xyz ) );
 			gl_Position = projectionMatrix * mvPosition;
