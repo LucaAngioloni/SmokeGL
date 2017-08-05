@@ -134,7 +134,7 @@ function init()
     uniforms_flame = {
         t: {value: 0.0},
         texture: { type: 't', value: new THREE.TextureLoader().load("images/flame.png") },
-        customOpacity: {value: 1},
+        customOpacity: {value: 0.7},
         customColor: {value: flameColor},
         timeLife: {value: TTL},
         speed: {value: Speed},
@@ -148,7 +148,7 @@ function init()
     uniforms_smoke = {
         t: {value: 0.0},
         texture: { type: 't', value: new THREE.TextureLoader().load("images/smokeparticle.png") },
-        customOpacity: {value: 1},
+        customOpacity: {value: 0.7},
         customColor: {value: smokeColor},
         timeLife: {value: TTL},
         speed: {value: Speed},
@@ -238,7 +238,7 @@ function createFlameParticles(n){
     var siz = new Float32Array(n);
 
     for (i=0; i < n; i++){
-        siz[i] = random_range(1,5);
+        siz[i] = random_range(1,4);
     }
 
     var ang = new Float32Array(n);
@@ -267,7 +267,7 @@ function createSmokeParticles(n){
     var siz = new Float32Array(n);
 
     for (i=0; i < n; i++){
-        siz[i] = random_range(1,5);
+        siz[i] = random_range(1,4);
     }
 
     var ang = new Float32Array(n);

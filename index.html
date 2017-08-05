@@ -92,6 +92,10 @@
 			gl_FragColor = vColor;
 			float c = cos(vAngle);
 			float s = sin(vAngle);
+			vec2 circCoord = 2.0 * gl_PointCoord - 1.0;
+			if (dot(circCoord, circCoord) > 0.5) {
+    			discard;
+			}
 			vec2 rotatedUV = vec2(c * (gl_PointCoord.x - 0.5) + s * (gl_PointCoord.y - 0.5) + 0.5,
 			c * (gl_PointCoord.y - 0.5) - s * (gl_PointCoord.x - 0.5) + 0.5);
 			vec4 rotatedTexture = texture2D( texture,  rotatedUV );
@@ -110,6 +114,10 @@
 			gl_FragColor = vColor;
 			float c = cos(vAngle);
 			float s = sin(vAngle);
+			vec2 circCoord = 2.0 * gl_PointCoord - 1.0;
+			if (dot(circCoord, circCoord) > 0.5) {
+    			discard;
+			}
 			vec2 rotatedUV = vec2(c * (gl_PointCoord.x - 0.5) + s * (gl_PointCoord.y - 0.5) + 0.5,
 			c * (gl_PointCoord.y - 0.5) - s * (gl_PointCoord.x - 0.5) + 0.5);
 			vec4 rotatedTexture = texture2D( texture,  rotatedUV );
