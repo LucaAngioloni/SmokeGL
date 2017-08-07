@@ -234,7 +234,7 @@ function init()
     });
     flameFolder.add(guiControls, 'FlameTimeLife', 0, 10).onFinishChange(function(newValue){
         uniforms_flame.timeLife.value = newValue;
-
+	//Bisognerebbe cambiare anche gli offset (che sono attributi) che vengono calcolati solo all'inizio in base al TTL iniziale. Infatti si creano quegli artefatti in cui la fiamma non è piu continua.
     });
     flameFolder.add(guiControls, 'FlameOpacity', 0, 1).onFinishChange(function(newValue){
         uniforms_flame.customOpacity.value = newValue;
@@ -249,7 +249,7 @@ function init()
     });
     smokeFolder.add(guiControls, 'SmokeTimeLife', 0, 10).onFinishChange(function(newValue){
         uniforms_smoke.timeLife.value = newValue;
-
+	//Bisognerebbe cambiare anche gli offset (che sono attributi) che vengono calcolati solo all'inizio in base al TTL iniziale. Infatti si creano quegli artefatti in cui il fumo non è piu continuo.
     });
     smokeFolder.add(guiControls, 'SmokeOpacity', 0, 1).onFinishChange(function(newValue){
 		uniforms_smoke.customOpacity.value = newValue;
@@ -322,7 +322,7 @@ function createSmokeParticles(n){
     var ang = new Float32Array(n);
 
     for (i=0; i < n; i++){
-        ang[i] = random_range(0,7);
+        ang[i] = random_range(0,2*Math.PI);
     }
 
     var to = new Float32Array(n);
