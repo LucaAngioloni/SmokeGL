@@ -37,9 +37,9 @@
 			vec3 p = position; //posizione in x,y,z attuale
 			//Calcola la nuova posizione
 			if(t-timeOffset > 0.0){
-				p.x += (mod(t-timeOffset,timeLife))*cos(customAngle)*speed;
+				p.x += (mod(t-timeOffset,timeLife))*0.4*cos(customAngle)*speed;
 				p.y += (mod(t-timeOffset,timeLife))*speed;
-				p.z += (mod(t-timeOffset,timeLife))*sin(customAngle)*speed;
+				p.z += (mod(t-timeOffset,timeLife))*0.4*sin(customAngle)*speed;
 			}
 
 			// Cambia opacità in funzione dell'altezza
@@ -74,9 +74,9 @@
 			vec3 p = position; //posizione in x,y,z attuale
 			//Calcola la nuova posizione
 			if(t-timeOffset > 0.0){
-				p.x += (mod(t-timeOffset,timeLife))*cos(customAngle)*speed;
+				p.x += (mod(t-timeOffset,timeLife))*0.2*cos(2.0*customAngle)*speed;
 				p.y += (mod(t-timeOffset,timeLife))*speed;
-				p.z += (mod(t-timeOffset,timeLife))*sin(customAngle)*speed;
+				p.z += (mod(t-timeOffset,timeLife))*0.2*sin(2.0*customAngle)*speed;
 			}
 
 			// Cambia opacità in funzione dell'altezza

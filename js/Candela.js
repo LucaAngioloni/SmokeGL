@@ -1,7 +1,7 @@
 
 var container, scene, camera, renderer, controls, stats, uniforms_flame, uniforms_smoke;
-var flameTTL = 3.5;
-var smokeTTL = 3.5;
+var flameTTL = 1.4;
+var smokeTTL = 7.4;
 var Speed = 10.0;
 var going = true;
 var originalAlpha = 0.6;
