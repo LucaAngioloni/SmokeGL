@@ -228,13 +228,19 @@ function init()
     
     flameFolder.add(guiControls, 'FlameParticles', 100, 100000).onFinishChange(function(newValue){
         //cant do it
+	//Forse sarebbe il caso di far ripartire tutto con un nuovo numero di particelle? Altrimenti un bel po di matematica per gestire le particelle in piu o in meno con i buffer di openGL.
     });
     flameFolder.add(guiControls, 'FlameDimension', 8, 100).onFinishChange(function(newValue){
-        //cabia particelle
+        //cabia attributo della size come sotto
     });
     flameFolder.add(guiControls, 'FlameTimeLife', 0, 10).onFinishChange(function(newValue){
         uniforms_flame.timeLife.value = newValue;
 	//Bisognerebbe cambiare anche gli offset (che sono attributi) che vengono calcolati solo all'inizio in base al TTL iniziale. Infatti si creano quegli artefatti in cui la fiamma non è piu continua.
+    	// per cambiarli:
+	// var newOffsets = flameGeometry.attributes.timeOffset
+	// for (i=0; i < numFlameParticles; i++){
+        //     newOffsets[i] = random_range(0,newValue);
+    }
     });
     flameFolder.add(guiControls, 'FlameOpacity', 0, 1).onFinishChange(function(newValue){
         uniforms_flame.customOpacity.value = newValue;
