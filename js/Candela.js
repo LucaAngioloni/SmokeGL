@@ -240,7 +240,7 @@ function init()
 	// var newOffsets = flameGeometry.attributes.timeOffset
 	// for (i=0; i < numFlameParticles; i++){
         //     newOffsets[i] = random_range(0,newValue);
-    }
+        // }
     });
     flameFolder.add(guiControls, 'FlameOpacity', 0, 1).onFinishChange(function(newValue){
         uniforms_flame.customOpacity.value = newValue;
