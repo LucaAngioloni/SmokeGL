@@ -6,7 +6,7 @@ var going = true;
 var originalAlpha = 0.6;
 var testAlphaFlame = 0.6;
 var testAlphaSmoke = 0.6;
-var numFlameParticles = 50000;
+var numFlameParticles = 10000;
 var numSmokeParticles = 50000;
 var flameStartingHeight = 101;
 var smokeStartingHeight = 115;
@@ -210,11 +210,12 @@ function init()
         this.FlameParticles = numFlameParticles;
         this.SmokeParticles = numSmokeParticles;
         this.FlameDimension = 8.0;
-        this.timeLife = 3.5;
+        this.FlameTimeLife = 3.5;
         this.FlameOpacity = 1.0;
         this.SmokeDimension = 8.0
         this.SmokeOpacity = 1.0;
         this.Time_Steam = 2.5;
+        this.SmokeTimeLife = 3.5;
         this.toggleMovement = function(){
             going = !going;
         }
@@ -226,13 +227,12 @@ function init()
     var smokeFolder = datGui.addFolder('Smoke');    
     
     flameFolder.add(guiControls, 'FlameParticles', 100, 100000).onFinishChange(function(newValue){
-        //cabia particelle
-
+        //cant do it
     });
     flameFolder.add(guiControls, 'FlameDimension', 8, 100).onFinishChange(function(newValue){
         //cabia particelle
     });
-    flameFolder.add(guiControls, 'timeLife', 0, 10).onFinishChange(function(newValue){
+    flameFolder.add(guiControls, 'FlameTimeLife', 0, 10).onFinishChange(function(newValue){
         uniforms_flame.timeLife.value = newValue;
 
     });
@@ -246,6 +246,10 @@ function init()
     });
     smokeFolder.add(guiControls, 'SmokeDimension', 8, 100).onFinishChange(function(newValue){
         
+    });
+    smokeFolder.add(guiControls, 'SmokeTimeLife', 0, 10).onFinishChange(function(newValue){
+        uniforms_smoke.timeLife.value = newValue;
+
     });
     smokeFolder.add(guiControls, 'SmokeOpacity', 0, 1).onFinishChange(function(newValue){
 		uniforms_smoke.customOpacity.value = newValue;
