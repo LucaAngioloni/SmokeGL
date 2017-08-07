@@ -1,6 +1,7 @@
 
 var container, scene, camera, renderer, controls, stats, uniforms_flame, uniforms_smoke;
-var TTL = 3.5;
+var flameTTL = 3.5;
+var smokeTTL = 3.5;
 var Speed = 10.0;
 var going = true;
 var originalAlpha = 0.6;
@@ -10,6 +11,8 @@ var numFlameParticles = 10000;
 var numSmokeParticles = 50000;
 var flameStartingHeight = 101;
 var smokeStartingHeight = 115;
+var flameSize = 4;
+var smokeSize = 4;
 
 
 $(document).ready(function(){
@@ -159,7 +162,7 @@ function init()
         texture: { type: 't', value: new THREE.TextureLoader().load("images/flame.png") },
         customOpacity: {value: 1.0},
         customColor: {value: flameColor},
-        timeLife: {value: TTL},
+        timeLife: {value: flameTTL},
         speed: {value: Speed},
     };
 
@@ -173,7 +176,7 @@ function init()
         texture: { type: 't', value: new THREE.TextureLoader().load("images/smokeparticle.png") },
         customOpacity: {value: 1.0},
         customColor: {value: smokeColor},
-        timeLife: {value: TTL},
+        timeLife: {value: smokeTTL},
         speed: {value: Speed},
     };   
 
@@ -209,13 +212,12 @@ function init()
     var guiControls = new function (){ 
         this.FlameParticles = numFlameParticles;
         this.SmokeParticles = numSmokeParticles;
-        this.FlameDimension = 8.0;
-        this.FlameTimeLife = 3.5;
+        this.FlameDimension = flameSize;
+        this.FlameTimeLife = flameTTL;
         this.FlameOpacity = 1.0;
-        this.SmokeDimension = 8.0
+        this.SmokeDimension = smokeSize;
         this.SmokeOpacity = 1.0;
-        this.Time_Steam = 2.5;
-        this.SmokeTimeLife = 3.5;
+        this.SmokeTimeLife = smokeTTL;
         this.toggleMovement = function(){
             going = !going;
         }
@@ -230,17 +232,22 @@ function init()
         //cant do it
 	//Forse sarebbe il caso di far ripartire tutto con un nuovo numero di particelle? Altrimenti un bel po di matematica per gestire le particelle in piu o in meno con i buffer di openGL.
     });
-    flameFolder.add(guiControls, 'FlameDimension', 8, 100).onFinishChange(function(newValue){
-        //cabia attributo della size come sotto
+    flameFolder.add(guiControls, 'FlameDimension', 2, 15).onFinishChange(function(newValue){
+        flameSize = newValue;
+
+        for (i=0; i < numFlameParticles; i++){
+            flameGeometry.attributes.customSize.array[i] = random_range(1, newValue);
+        }
+        flameGeometry.attributes.customSize.needsUpdate = true;
     });
     flameFolder.add(guiControls, 'FlameTimeLife', 0, 10).onFinishChange(function(newValue){
         uniforms_flame.timeLife.value = newValue;
-	//Bisognerebbe cambiare anche gli offset (che sono attributi) che vengono calcolati solo all'inizio in base al TTL iniziale. Infatti si creano quegli artefatti in cui la fiamma non è piu continua.
-    	// per cambiarli:
-	// var newOffsets = flameGeometry.attributes.timeOffset
-	// for (i=0; i < numFlameParticles; i++){
-        //     newOffsets[i] = random_range(0,newValue);
-        // }
+        flameTTL = newValue;
+
+    	for (i=0; i < numFlameParticles; i++){
+            flameGeometry.attributes.timeOffset.array[i] = random_range(0, newValue);
+        }
+        flameGeometry.attributes.timeOffset.needsUpdate = true;
     });
     flameFolder.add(guiControls, 'FlameOpacity', 0, 1).onFinishChange(function(newValue){
         uniforms_flame.customOpacity.value = newValue;
@@ -250,12 +257,22 @@ function init()
     smokeFolder.add(guiControls, 'SmokeParticles', 100, 100000).onFinishChange(function(){
         //cabia particelle
     });
-    smokeFolder.add(guiControls, 'SmokeDimension', 8, 100).onFinishChange(function(newValue){
-        
+    smokeFolder.add(guiControls, 'SmokeDimension', 2, 15).onFinishChange(function(newValue){
+        smokeSize = newValue;
+
+        for (i=0; i < numSmokeParticles; i++){
+            smokeGeometry.attributes.customSize.array[i] = random_range(1, newValue);
+        }
+        smokeGeometry.attributes.customSize.needsUpdate = true;
     });
     smokeFolder.add(guiControls, 'SmokeTimeLife', 0, 10).onFinishChange(function(newValue){
         uniforms_smoke.timeLife.value = newValue;
-	//Bisognerebbe cambiare anche gli offset (che sono attributi) che vengono calcolati solo all'inizio in base al TTL iniziale. Infatti si creano quegli artefatti in cui il fumo non è piu continuo.
+        smokeTTL = newValue;
+
+        for (i=0; i < numSmokeParticles; i++){
+            smokeGeometry.attributes.timeOffset.array[i] = random_range(0, newValue);
+        }
+        smokeGeometry.attributes.timeOffset.needsUpdate = true;
     });
     smokeFolder.add(guiControls, 'SmokeOpacity', 0, 1).onFinishChange(function(newValue){
 		uniforms_smoke.customOpacity.value = newValue;
@@ -293,19 +310,19 @@ function createFlameParticles(n){
     var siz = new Float32Array(n);
 
     for (i=0; i < n; i++){
-        siz[i] = random_range(1,4);
+        siz[i] = random_range(1,flameSize);
     }
 
     var ang = new Float32Array(n);
 
     for (i=0; i < n; i++){
-        ang[i] = random_range(0,7);
+        ang[i] = random_range(0,2*Math.PI);
     }
 
     var to = new Float32Array(n);
 
     for (i=0; i < n; i++){
-        to[i] = random_range(0,TTL);
+        to[i] = random_range(0,flameTTL);
     }
 
     return {positions: pos, sizes: siz, angles: ang, timeOffsets: to};
@@ -322,7 +339,7 @@ function createSmokeParticles(n){
     var siz = new Float32Array(n);
 
     for (i=0; i < n; i++){
-        siz[i] = random_range(1,4);
+        siz[i] = random_range(1,smokeSize);
     }
 
     var ang = new Float32Array(n);
@@ -334,7 +351,7 @@ function createSmokeParticles(n){
     var to = new Float32Array(n);
 
     for (i=0; i < n; i++){
-        to[i] = random_range(0,TTL);
+        to[i] = random_range(0,smokeTTL);
     }
     return {positions: pos, sizes: siz, angles: ang, timeOffsets: to};
 }
