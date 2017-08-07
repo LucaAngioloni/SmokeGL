@@ -103,7 +103,7 @@
 			float c = cos(vAngle);
 			float s = sin(vAngle);
 			vec2 circCoord = 2.0 * gl_PointCoord - 1.0;
-			if (dot(circCoord, circCoord) > 0.5) {
+			if (dot(circCoord, circCoord) > 0.8) {
     			discard;
 			}
 			vec2 rotatedUV = vec2(c * (gl_PointCoord.x - 0.5) + s * (gl_PointCoord.y - 0.5) + 0.5,
@@ -125,7 +125,7 @@
 			float c = cos(vAngle);
 			float s = sin(vAngle);
 			vec2 circCoord = 2.0 * gl_PointCoord - 1.0;
-			if (dot(circCoord, circCoord) > 0.5) {
+			if (dot(circCoord, circCoord) > 0.8) {
     			discard;
 			}
 			vec2 rotatedUV = vec2(c * (gl_PointCoord.x - 0.5) + s * (gl_PointCoord.y - 0.5) + 0.5,

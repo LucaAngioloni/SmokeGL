@@ -2,9 +2,9 @@
 var container, scene, camera, renderer, controls, stats, uniforms_flame, uniforms_smoke;
 var TTL = 3.5;
 var Speed = 10.0;
+var going = true;
 
 $(document).ready(function(){
-    var keyboard = new THREEx.KeyboardState();
     var clock = new THREE.Clock();
 
     //Configura la scena, inizializza gli shader, crea la GUI
@@ -37,6 +37,21 @@ function init()
     // EVENTS
     THREEx.WindowResize(renderer, camera);
     THREEx.FullScreen.bindKey({ charCode : 'f'.charCodeAt(0) }); // Va fullscreen se si preme f
+
+    var keyboard = new THREEx.KeyboardState();
+
+    window.addEventListener('keydown', function(event){
+        if (event.repeat) {
+            return;
+        }
+        var key     = "space";
+        var pressed = keyboard.pressed(key);
+        //console.log("key", key, "pressed", pressed);
+        if(pressed){
+            going = !going;
+            //console.log("going", going);
+        }
+    })
 
     // CONTROLS
     controls = new THREE.OrbitControls( camera, renderer.domElement );
@@ -169,8 +184,12 @@ function init()
             transparent: true,
         });
 
-    var flame = new THREE.Points(flameGeometry, flameMaterial);
-    var smoke = new THREE.Points(smokeGeometry, smokeMaterial);
+    var flame = new THREE.PointCloud( flameGeometry, flameMaterial );
+    flame.sortParticles = true; // the default is false
+    var smoke = new THREE.PointCloud( smokeGeometry, smokeMaterial );
+    smoke.sortParticles = true; // the default is false
+    // var flame = new THREE.Points(flameGeometry, flameMaterial);
+    // var smoke = new THREE.Points(smokeGeometry, smokeMaterial);
 
     scene.add(flame);
     scene.add(smoke);
@@ -186,6 +205,9 @@ function init()
         this.SmokeDimension = 8.0
         this.SmokeOpacity = 0.5;
         this.Time_Steam = 2.5;
+        this.toggleMovement = function(){
+            going = !going;
+        }
     }; //Valori da cambiare una volta fatto lo shader
 
     datGui = new dat.GUI();  
@@ -217,15 +239,19 @@ function init()
     smokeFolder.add(guiControls, 'SmokeOpacity', 0, 1).onFinishChange(function(newValue){
 		uniforms_smoke.customOpacity.value = newValue;    
 	});
-    
+
+
+    datGui.add(guiControls, 'toggleMovement').name("ToggleMovement");
     datGui.open(); 
 }
 
 
 function render(){
     //aggiorno tempo
-    uniforms_flame.t.value += 1.0/60.0;
-    uniforms_smoke.t.value += 1.0/60.0;
+    if(going){
+        uniforms_flame.t.value += 1.0/60.0;
+        uniforms_smoke.t.value += 1.0/60.0;
+    }
 
     stats.update(); // aggiorna statistiche
     controls.update(); //aggiorna i controlli della vista e camera
