@@ -3,6 +3,14 @@ var container, scene, camera, renderer, controls, stats, uniforms_flame, uniform
 var TTL = 3.5;
 var Speed = 10.0;
 var going = true;
+var originalAlpha = 0.6;
+var testAlphaFlame = 0.6;
+var testAlphaSmoke = 0.6;
+var numFlameParticles = 50000;
+var numSmokeParticles = 50000;
+var flameStartingHeight = 101;
+var smokeStartingHeight = 115;
+
 
 $(document).ready(function(){
     var clock = new THREE.Clock();
@@ -55,7 +63,7 @@ function init()
 
     // CONTROLS
     controls = new THREE.OrbitControls( camera, renderer.domElement );
-    controls.minDistance = 100;
+    controls.minDistance = 50;
     controls.maxDistance = 500;
     
     // STATS
@@ -122,8 +130,8 @@ function init()
     var smokeGeometry = new THREE.BufferGeometry();
 
     // Generate initial particle positions
-    var flameData = createFlameParticles(40000);
-    var smokeData = createSmokeParticles(40000);
+    var flameData = createFlameParticles(numFlameParticles);
+    var smokeData = createSmokeParticles(numSmokeParticles);
 
     // add the position to the vertex shader
     flameGeometry.addAttribute('position', new THREE.BufferAttribute(flameData.positions, 3));
@@ -149,7 +157,7 @@ function init()
     uniforms_flame = {
         t: {value: 0.0},
         texture: { type: 't', value: new THREE.TextureLoader().load("images/flame.png") },
-        customOpacity: {value: 0.7},
+        customOpacity: {value: 1.0},
         customColor: {value: flameColor},
         timeLife: {value: TTL},
         speed: {value: Speed},
@@ -163,7 +171,7 @@ function init()
     uniforms_smoke = {
         t: {value: 0.0},
         texture: { type: 't', value: new THREE.TextureLoader().load("images/smokeparticle.png") },
-        customOpacity: {value: 0.7},
+        customOpacity: {value: 1.0},
         customColor: {value: smokeColor},
         timeLife: {value: TTL},
         speed: {value: Speed},
@@ -174,6 +182,8 @@ function init()
             vertexShader: flameVertexShader,
             fragmentShader: flameFragmentShader,
             blending: THREE.AdditiveBlending,
+            side: THREE.DoubleSide,
+            alphaTest: testAlphaFlame,
             transparent: true,
         });
     var smokeMaterial = new THREE.ShaderMaterial({
@@ -181,15 +191,15 @@ function init()
             vertexShader: smokeVertexShader,
             fragmentShader: smokeFragmentShader,
             blending: THREE.AdditiveBlending,
+            side: THREE.DoubleSide,
+            alphaTest: testAlphaSmoke,
             transparent: true,
         });
 
-    var flame = new THREE.PointCloud( flameGeometry, flameMaterial );
+    var flame = new THREE.Points(flameGeometry, flameMaterial);
+    var smoke = new THREE.Points(smokeGeometry, smokeMaterial);
     flame.sortParticles = true; // the default is false
-    var smoke = new THREE.PointCloud( smokeGeometry, smokeMaterial );
     smoke.sortParticles = true; // the default is false
-    // var flame = new THREE.Points(flameGeometry, flameMaterial);
-    // var smoke = new THREE.Points(smokeGeometry, smokeMaterial);
 
     scene.add(flame);
     scene.add(smoke);
@@ -197,13 +207,13 @@ function init()
     // GUI
     
     var guiControls = new function (){ 
-        this.FlameParticles = 1000;
-        this.SmokeParticles = 1000;
+        this.FlameParticles = numFlameParticles;
+        this.SmokeParticles = numSmokeParticles;
         this.FlameDimension = 8.0;
         this.timeLife = 3.5;
         this.FlameOpacity = 1.0;
         this.SmokeDimension = 8.0
-        this.SmokeOpacity = 0.5;
+        this.SmokeOpacity = 1.0;
         this.Time_Steam = 2.5;
         this.toggleMovement = function(){
             going = !going;
@@ -228,6 +238,7 @@ function init()
     });
     flameFolder.add(guiControls, 'FlameOpacity', 0, 1).onFinishChange(function(newValue){
         uniforms_flame.customOpacity.value = newValue;
+        testAlphaFlame = originalAlpha * newValue;
 
     });
     smokeFolder.add(guiControls, 'SmokeParticles', 100, 100000).onFinishChange(function(){
@@ -237,7 +248,8 @@ function init()
         
     });
     smokeFolder.add(guiControls, 'SmokeOpacity', 0, 1).onFinishChange(function(newValue){
-		uniforms_smoke.customOpacity.value = newValue;    
+		uniforms_smoke.customOpacity.value = newValue;
+        testAlphaSmoke = originalAlpha * newValue;   
 	});
 
 
@@ -264,7 +276,7 @@ function createFlameParticles(n){
     var pos = new Float32Array(n*3);
     for (i=0; i < n; i++){
         pos[i*3] = 0;
-        pos[i*3+1] = 100;
+        pos[i*3+1] = flameStartingHeight;
         pos[i*3+2] = 0;
     }
 
@@ -293,7 +305,7 @@ function createSmokeParticles(n){
     var pos = new Float32Array(n*3);
     for (i=0; i < n; i++){
         pos[i*3] = 0;
-        pos[i*3+1] = 120;
+        pos[i*3+1] = smokeStartingHeight;
         pos[i*3+2] = 0;
     }
 
