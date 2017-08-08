@@ -35,7 +35,7 @@ function init()
     camera = new THREE.PerspectiveCamera( VIEW_ANGLE, ASPECT, NEAR, FAR);
     scene.add(camera);
     camera.position.set(0,200,400);
-    camera.lookAt(scene.position);
+    var lookingPosition = new THREE.Vector3(scene.position.x, scene.position.y + 100, scene.position.z);
     
     // RENDERER
     renderer = new THREE.WebGLRenderer( {antialias:true} );
@@ -67,6 +67,7 @@ function init()
     controls = new THREE.OrbitControls( camera, renderer.domElement );
     controls.minDistance = 50;
     controls.maxDistance = 500;
+    controls.center = lookingPosition;
     
     // STATS
     stats = new Stats();

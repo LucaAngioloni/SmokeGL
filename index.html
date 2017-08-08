@@ -31,21 +31,33 @@
 		uniform float t;
 		uniform float speed;
 
+		highp float rand(vec2 co)
+		{
+		    highp float a = 12.9898;
+		    highp float b = 78.233;
+		    highp float c = 43758.5453;
+		    highp float dt= dot(co.xy ,vec2(a,b));
+		    highp float sn= mod(dt,3.14);
+		    return fract(sin(sn) * c);
+		}
+
 		void main()
 		{
-			vAngle = customAngle;
+			vAngle = customAngle; //Angolo random assegnato inizialmente
 			vec3 p = position; //posizione in x,y,z iniziale
 			float r;
 			float heightCorrection = timeLife*3.0;
-			float widthCorrection = timeLife/0.9;
+			float widthCorrection = timeLife;
 
 			//Calcola la posizione al tempo t
 			if(t-timeOffset > 0.0){
 				p.y += (mod(t-timeOffset,timeLife))*speed;
 				r = 3.121378*exp(-pow((((p.y - position.y)/heightCorrection)- 2.890766),2.0)/(2.0*pow(1.363839,2.0))); // calcolata con fitting su gaussiana
 				r = r*widthCorrection;
-				p.x += cos(customAngle)*r;
-				p.z += sin(customAngle)*r;
+				r -= rand(vec2(t,vAngle))*0.9*r; // randomicità
+				//vAngle += rand(vec2(t,r))*0.9*vAngle; // randomicità nell'angolo, l'effetto non si vede molto
+				p.x += cos(vAngle)*r;
+				p.z += sin(vAngle)*r;
 			}
 
 			// Cambia opacità in funzione dell'altezza
@@ -92,9 +104,12 @@
 			vec3 p = position; //posizione in x,y,z iniziale
 			//Calcola la posizione al tempo t
 			if(t-timeOffset > 0.0){
-				p.x += (mod(t-timeOffset,timeLife))*0.2*cos(2.0*customAngle)*speed;
 				p.y += (mod(t-timeOffset,timeLife))*speed;
-				p.z += (mod(t-timeOffset,timeLife))*0.2*sin(2.0*customAngle)*speed;
+
+				float r = rand(vec2(t,vAngle))*0.9*(p.y - position.y); // randomicità
+
+				p.x += (p.y - position.y - r)*0.2*cos(2.0*customAngle);
+				p.z += (p.y - position.y - r)*0.2*sin(2.0*customAngle);
 
 				//Per regolare la posizione del fumo in base al timeLife del fuoco
 				p.y += posOffset;
@@ -177,8 +192,7 @@
 	<script src="js/loaders/MTLLoader.js"></script>
 	<script src="js/loaders/OBJLoader.js"></script>
 
-	<script type='text/javascript' src='js/DAT.GUI.min.js'>
-	</script>
+	<script type='text/javascript' src='js/DAT.GUI.min.js'></script>
 
 	<script>
 		if(mobile()){
