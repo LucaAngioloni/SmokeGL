@@ -1,4 +1,3 @@
-
 var container, scene, camera, renderer, controls, stats, uniforms_flame, uniforms_smoke;
 var flameTTL = 1.4;
 var smokeTTL = 7.4;
@@ -20,9 +19,6 @@ $(document).ready(function(){
 
     //Configura la scena, inizializza gli shader, crea la GUI
     init();
-
-    // potremmo usare anche del post processing per migliorare la qualità grafica
-    // https://github.com/vanruesc/postprocessing
     
     //metodo che fa il render frame per frame.
     render();

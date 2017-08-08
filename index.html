@@ -35,11 +35,13 @@
 		{
 			vAngle = customAngle;
 			vec3 p = position; //posizione in x,y,z iniziale
+			float r;
 			//Calcola la posizione al tempo t
 			if(t-timeOffset > 0.0){
-				p.x += (mod(t-timeOffset,timeLife))*0.4*cos(customAngle)*speed;
 				p.y += (mod(t-timeOffset,timeLife))*speed;
-				p.z += (mod(t-timeOffset,timeLife))*0.4*sin(customAngle)*speed;
+				r = 3.121378*exp(-pow((p.y - 2.890766),2.0)/(2.0*pow(1.363839,2.0)));
+				p.x += cos(customAngle)*r;
+				p.z += sin(customAngle)*r;
 			}
 
 			// Cambia opacità in funzione dell'altezza
