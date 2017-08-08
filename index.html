@@ -36,10 +36,14 @@
 			vAngle = customAngle;
 			vec3 p = position; //posizione in x,y,z iniziale
 			float r;
+			float heightCorrection = 2.0; // da rendere in funzione del timeLife
+			float widthCorrection = 1.4;
+
 			//Calcola la posizione al tempo t
 			if(t-timeOffset > 0.0){
 				p.y += (mod(t-timeOffset,timeLife))*speed;
-				r = 3.121378*exp(-pow((p.y - 2.890766),2.0)/(2.0*pow(1.363839,2.0)));
+				r = 3.121378*exp(-pow((((p.y - position.y)/heightCorrection)- 2.890766),2.0)/(2.0*pow(1.363839,2.0))); // calcolata con fitting su gaussiana
+				r = r*widthCorrection;
 				p.x += cos(customAngle)*r;
 				p.z += sin(customAngle)*r;
 			}
