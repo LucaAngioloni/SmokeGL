@@ -9,7 +9,7 @@ var testAlphaSmoke = 0.6;
 var numFlameParticles = 15000;
 var numSmokeParticles = 50000;
 var flameStartingHeight = 101;
-var smokeStartingHeight = 130;
+var smokeStartingHeight = flameStartingHeight+(flameTTL*Speed) - 5; //Il fumo deve partire dalla punta della fiamma
 var flameSize = 7;
 var smokeSize = 4;
 
@@ -241,6 +241,7 @@ function init()
         flameGeometry.attributes.customSize.needsUpdate = true;
     });
     flameFolder.add(guiControls, 'FlameTimeLife', 0, 10).onFinishChange(function(newValue){
+        var oldH = flameStartingHeight + (flameTTL*Speed) - 5;
         uniforms_flame.timeLife.value = newValue;
         flameTTL = newValue;
 
@@ -249,6 +250,9 @@ function init()
         }
         flameGeometry.attributes.timeOffset.needsUpdate = true;
 
+        var newH = flameStartingHeight + (flameTTL*Speed) - 5;
+        var diff = newH - oldH;
+        uniforms_smoke.posOffset.value += diff;
         //Dovremmo cambiare anche la posizione di partenza del fumo quando si cambia il timeLife della fiamma, altrimenti resta in alto a volare o dentro la fiamma.
     });
     flameFolder.add(guiControls, 'FlameOpacity', 0, 1).onFinishChange(function(newValue){
