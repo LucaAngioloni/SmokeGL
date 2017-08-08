@@ -34,8 +34,8 @@
 		void main()
 		{
 			vAngle = customAngle;
-			vec3 p = position; //posizione in x,y,z attuale
-			//Calcola la nuova posizione
+			vec3 p = position; //posizione in x,y,z iniziale
+			//Calcola la posizione al tempo t
 			if(t-timeOffset > 0.0){
 				p.x += (mod(t-timeOffset,timeLife))*0.4*cos(customAngle)*speed;
 				p.y += (mod(t-timeOffset,timeLife))*speed;
@@ -71,8 +71,8 @@
 		void main()
 		{		
 			vAngle = customAngle;
-			vec3 p = position; //posizione in x,y,z attuale
-			//Calcola la nuova posizione
+			vec3 p = position; //posizione in x,y,z iniziale
+			//Calcola la posizione al tempo t
 			if(t-timeOffset > 0.0){
 				p.x += (mod(t-timeOffset,timeLife))*0.2*cos(2.0*customAngle)*speed;
 				p.y += (mod(t-timeOffset,timeLife))*speed;

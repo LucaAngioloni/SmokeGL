@@ -21,6 +21,9 @@ $(document).ready(function(){
     //Configura la scena, inizializza gli shader, crea la GUI
     init();
 
+    // potremmo usare anche del post processing per migliorare la qualità grafica
+    // https://github.com/vanruesc/postprocessing
+    
     //metodo che fa il render frame per frame.
     render();
 });
