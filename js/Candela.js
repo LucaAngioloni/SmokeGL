@@ -1,16 +1,16 @@
 var container, scene, camera, renderer, controls, stats, uniforms_flame, uniforms_smoke;
-var flameTTL = 1.4;
+var flameTTL = 1.7;
 var smokeTTL = 7.4;
-var Speed = 10.0;
+var Speed = 25.0;
 var going = true;
 var originalAlpha = 0.6;
 var testAlphaFlame = 0.6;
 var testAlphaSmoke = 0.6;
-var numFlameParticles = 10000;
+var numFlameParticles = 15000;
 var numSmokeParticles = 50000;
 var flameStartingHeight = 101;
-var smokeStartingHeight = 115;
-var flameSize = 4;
+var smokeStartingHeight = 130;
+var flameSize = 7;
 var smokeSize = 4;
 
 
@@ -177,6 +177,7 @@ function init()
         customColor: {value: smokeColor},
         timeLife: {value: smokeTTL},
         speed: {value: Speed},
+        posOffset: {value: 0.0},
     };   
 
     var flameMaterial = new THREE.ShaderMaterial({
@@ -247,6 +248,8 @@ function init()
             flameGeometry.attributes.timeOffset.array[i] = random_range(0, newValue);
         }
         flameGeometry.attributes.timeOffset.needsUpdate = true;
+
+        //Dovremmo cambiare anche la posizione di partenza del fumo quando si cambia il timeLife della fiamma, altrimenti resta in alto a volare o dentro la fiamma.
     });
     flameFolder.add(guiControls, 'FlameOpacity', 0, 1).onFinishChange(function(newValue){
         uniforms_flame.customOpacity.value = newValue;

@@ -36,8 +36,8 @@
 			vAngle = customAngle;
 			vec3 p = position; //posizione in x,y,z iniziale
 			float r;
-			float heightCorrection = 2.0; // da rendere in funzione del timeLife
-			float widthCorrection = 1.4;
+			float heightCorrection = timeLife*3.0;
+			float widthCorrection = timeLife/0.9;
 
 			//Calcola la posizione al tempo t
 			if(t-timeOffset > 0.0){
@@ -73,6 +73,7 @@
 		uniform float t;
 		uniform float timeLife;
 		uniform float speed;
+		uniform float posOffset;
 
 		void main()
 		{		
@@ -83,6 +84,11 @@
 				p.x += (mod(t-timeOffset,timeLife))*0.2*cos(2.0*customAngle)*speed;
 				p.y += (mod(t-timeOffset,timeLife))*speed;
 				p.z += (mod(t-timeOffset,timeLife))*0.2*sin(2.0*customAngle)*speed;
+
+				//Per regolare la posizione del fumo in base al timeLife del fuoco
+				p.x += posOffset;
+				p.y += posOffset;
+				p.z += posOffset;
 			}
 
 			// Cambia opacità in funzione dell'altezza
