@@ -46,8 +46,8 @@
 			vAngle = customAngle; //Angolo random assegnato inizialmente
 			vec3 p = position; //posizione in x,y,z iniziale
 			float r;
-			float heightCorrection = timeLife*3.0;
-			float widthCorrection = timeLife;
+			float heightCorrection = timeLife*speed/7.5;
+			float widthCorrection = timeLife*speed/25.0;
 
 			//Calcola la posizione al tempo t
 			if(t-timeOffset > 0.0){

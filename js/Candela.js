@@ -15,6 +15,9 @@ var smokeStartingHeight = flameStartingHeight+(flameTTL*Speed) - 5; //Il fumo de
 var flameSize = 7;
 var smokeSize = 4;
 
+var flameSTconst = flameTTL * Speed;
+var smokeSTconst = smokeTTL * Speed;
+
 
 $(document).ready(function(){
     var clock = new THREE.Clock();
@@ -224,6 +227,7 @@ function init()
         this.toggleMovement = function(){
             going = !going;
         }
+        this.Speed = Speed;
     }; //Valori da cambiare una volta fatto lo shader
 
     datGui = new dat.GUI();  
@@ -264,6 +268,8 @@ function init()
         uniforms_flame.timeLife.value = newValue;
         flameTTL = newValue;
 
+        flameSTconst = flameTTL * Speed;
+
     	for (i=0; i < numFlameParticles; i++){
             flameGeometry.attributes.timeOffset.array[i] = random_range(0, newValue);
         }
@@ -272,7 +278,6 @@ function init()
         var newH = flameStartingHeight + (flameTTL*Speed) - 5;
         var diff = newH - oldH;
         uniforms_smoke.posOffset.value += diff;
-        //Dovremmo cambiare anche la posizione di partenza del fumo quando si cambia il timeLife della fiamma, altrimenti resta in alto a volare o dentro la fiamma.
     });
     flameFolder.add(guiControls, 'FlameOpacity', 0, 1).onFinishChange(function(newValue){
         uniforms_flame.customOpacity.value = newValue;
@@ -311,6 +316,8 @@ function init()
         uniforms_smoke.timeLife.value = newValue;
         smokeTTL = newValue;
 
+        smokeSTconst = smokeTTL * Speed;
+
         for (i=0; i < numSmokeParticles; i++){
             smokeGeometry.attributes.timeOffset.array[i] = random_range(0, newValue);
         }
@@ -323,6 +330,28 @@ function init()
 
 
     datGui.add(guiControls, 'toggleMovement').name("ToggleMovement");
+    datGui.add(guiControls, 'Speed', 1, 50).onFinishChange(function(newValue){
+        Speed = newValue;
+        uniforms_smoke.speed.value = newValue;
+        uniforms_flame.speed.value = newValue; 
+
+        flameTTL = flameSTconst / newValue;
+        smokeTTL = smokeSTconst / newValue;
+
+        uniforms_smoke.timeLife.value = smokeTTL;
+
+        for (i=0; i < numSmokeParticles; i++){
+            smokeGeometry.attributes.timeOffset.array[i] = random_range(0, smokeTTL);
+        }
+        smokeGeometry.attributes.timeOffset.needsUpdate = true;
+
+        uniforms_flame.timeLife.value = flameTTL;
+
+        for (i=0; i < numFlameParticles; i++){
+            flameGeometry.attributes.timeOffset.array[i] = random_range(0, flameTTL);
+        }
+        flameGeometry.attributes.timeOffset.needsUpdate = true;
+    });
     datGui.open(); 
 }
 
