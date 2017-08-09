@@ -7,13 +7,9 @@ var originalAlpha = 0.6;
 var testAlphaFlame = 0.6;
 var testAlphaSmoke = 0.6;
 var numFlameParticles = 15000;
-<<<<<<< HEAD
 var numSmokeParticles = 100000;
-=======
 var maxNumFlameParticles = 40000;
-var numSmokeParticles = 50000;
 var maxNumSmokeParticles = 100000;
->>>>>>> f0541c809af9f36684cd9a0f7efb4cda07d04f79
 var flameStartingHeight = 101;
 var smokeStartingHeight = flameStartingHeight+(flameTTL*Speed) - 5; //Il fumo deve partire dalla punta della fiamma
 var flameSize = 7;
