@@ -7,7 +7,9 @@ var originalAlpha = 0.6;
 var testAlphaFlame = 0.6;
 var testAlphaSmoke = 0.6;
 var numFlameParticles = 15000;
+var maxNumFlameParticles = 40000;
 var numSmokeParticles = 50000;
+var maxNumSmokeParticles = 100000;
 var flameStartingHeight = 101;
 var smokeStartingHeight = flameStartingHeight+(flameTTL*Speed) - 5; //Il fumo deve partire dalla punta della fiamma
 var flameSize = 7;
@@ -136,7 +138,7 @@ function init()
     var flameData = createFlameParticles(numFlameParticles);
     var smokeData = createSmokeParticles(numSmokeParticles);
 
-    // add the position to the vertex shader
+    // add attributes
     flameGeometry.addAttribute('position', new THREE.BufferAttribute(flameData.positions, 3));
     flameGeometry.addAttribute('customSize', new THREE.BufferAttribute(flameData.sizes, 1));
     flameGeometry.addAttribute('customAngle', new THREE.BufferAttribute(flameData.angles, 1));
@@ -229,10 +231,26 @@ function init()
     var flameFolder = datGui.addFolder('Flame');
     var smokeFolder = datGui.addFolder('Smoke');    
     
-    flameFolder.add(guiControls, 'FlameParticles', 100, 100000).onFinishChange(function(newValue){
-        //cant do it
-	//Forse sarebbe il caso di far ripartire tutto con un nuovo numero di particelle? Altrimenti un bel po di matematica per gestire le particelle in piu o in meno con i buffer di openGL.
-    });
+    flameFolder.add(guiControls, 'FlameParticles', 100, maxNumFlameParticles).onFinishChange(function(newValue){
+        numFlameParticles = newValue;
+
+        var newData = createFlameParticles(newValue);
+
+        flameGeometry.removeAttribute('position');
+        flameGeometry.removeAttribute('customSize');
+        flameGeometry.removeAttribute('customAngle');
+        flameGeometry.removeAttribute('timeOffset');
+
+        flameGeometry.addAttribute('position', new THREE.BufferAttribute(newData.positions, 3));
+        flameGeometry.addAttribute('customSize', new THREE.BufferAttribute(newData.sizes, 1));
+        flameGeometry.addAttribute('customAngle', new THREE.BufferAttribute(newData.angles, 1));
+        flameGeometry.addAttribute('timeOffset', new THREE.BufferAttribute(newData.timeOffsets, 1));
+
+        flameGeometry.attributes.position.needsUpdate = true;
+        flameGeometry.attributes.customSize.needsUpdate = true;
+        flameGeometry.attributes.customAngle.needsUpdate = true;
+        flameGeometry.attributes.timeOffset.needsUpdate = true;
+	});
     flameFolder.add(guiControls, 'FlameDimension', 2, 15).onFinishChange(function(newValue){
         flameSize = newValue;
 
@@ -261,8 +279,25 @@ function init()
         testAlphaFlame = originalAlpha * newValue;
 
     });
-    smokeFolder.add(guiControls, 'SmokeParticles', 100, 100000).onFinishChange(function(){
-        //cabia particelle
+    smokeFolder.add(guiControls, 'SmokeParticles', 100, maxNumSmokeParticles).onFinishChange(function(newValue){
+        numSmokeParticles = newValue;
+
+        var newData = createSmokeParticles(newValue);
+
+        smokeGeometry.removeAttribute('position');
+        smokeGeometry.removeAttribute('customSize');
+        smokeGeometry.removeAttribute('customAngle');
+        smokeGeometry.removeAttribute('timeOffset');
+
+        smokeGeometry.addAttribute('position', new THREE.BufferAttribute(newData.positions, 3));
+        smokeGeometry.addAttribute('customSize', new THREE.BufferAttribute(newData.sizes, 1));
+        smokeGeometry.addAttribute('customAngle', new THREE.BufferAttribute(newData.angles, 1));
+        smokeGeometry.addAttribute('timeOffset', new THREE.BufferAttribute(newData.timeOffsets, 1));
+
+        smokeGeometry.attributes.position.needsUpdate = true;
+        smokeGeometry.attributes.customSize.needsUpdate = true;
+        smokeGeometry.attributes.customAngle.needsUpdate = true;
+        smokeGeometry.attributes.timeOffset.needsUpdate = true;
     });
     smokeFolder.add(guiControls, 'SmokeDimension', 2, 15).onFinishChange(function(newValue){
         smokeSize = newValue;
@@ -305,14 +340,21 @@ function render(){
     requestAnimationFrame(render); //alla prossima necessità di render passo la funzione render stessa che viene chiamata come callback
 }
 
-
-function createFlameParticles(n){
+function flameBufferPos(n){
     var pos = new Float32Array(n*3);
+
     for (i=0; i < n; i++){
         pos[i*3] = 0;
         pos[i*3+1] = flameStartingHeight;
         pos[i*3+2] = 0;
     }
+
+    return pos;
+}
+
+
+function createFlameParticles(n){
+    var pos = flameBufferPos(n);
 
     var siz = new Float32Array(n);
 
@@ -335,13 +377,20 @@ function createFlameParticles(n){
     return {positions: pos, sizes: siz, angles: ang, timeOffsets: to};
 }
 
-function createSmokeParticles(n){
+function smokeBufferPos(n){
     var pos = new Float32Array(n*3);
+
     for (i=0; i < n; i++){
         pos[i*3] = 0;
         pos[i*3+1] = smokeStartingHeight;
         pos[i*3+2] = 0;
     }
+
+    return pos;
+}
+
+function createSmokeParticles(n){
+    var pos = smokeBufferPos(n);
 
     var siz = new Float32Array(n);
 
