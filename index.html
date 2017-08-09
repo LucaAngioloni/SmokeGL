@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="it">
+<head>
+	<title>Candela</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+	<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+	<link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+	<link rel=stylesheet href="css/base.css"/>
+
+	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+	<script src="js/mobile.js" type="text/javascript" charset="utf-8"></script>
+
+<!--	<script src="js/Three.js"></script> -->
+</head>
+
+<body>
+	<script type="x-shader/x-vertex" id="vertex_flame">
+		uniform vec3  customColor;
+		uniform float customOpacity;
+		attribute float customSize;
+		attribute float customAngle;
+		attribute float timeOffset;
+
+
+		varying vec4  vColor;
+		varying float vAngle;
+
+		uniform float timeLife;
+		uniform float t;
+		uniform float speed;
+
+		highp float rand(vec2 co)
+		{
+		    highp float a = 12.9898;
+		    highp float b = 78.233;
+		    highp float c = 43758.5453;
+		    highp float dt= dot(co.xy ,vec2(a,b));
+		    highp float sn= mod(dt,3.14);
+		    return fract(sin(sn) * c);
+		}
+
+		void main()
+		{
+			vAngle = customAngle; //Angolo random assegnato inizialmente
+			vec3 p = position; //posizione in x,y,z iniziale
+			float r;
+			float heightCorrection = timeLife*speed/7.5;
+			float widthCorrection = timeLife*speed/25.0;
+
+			//Calcola la posizione al tempo t
+			if(t-timeOffset > 0.0){
+				p.y += (mod(t-timeOffset,timeLife))*speed;
+				r = 3.121378*exp(-pow((((p.y - position.y)/heightCorrection)- 2.890766),2.0)/(2.0*pow(1.363839,2.0))); // calcolata con fitting su gaussiana
+				r = r*widthCorrection;
+				r -= rand(vec2(t,vAngle))*0.9*r; // randomicità
+				//vAngle += rand(vec2(t,r))*0.9*vAngle; // randomicità nell'angolo, l'effetto non si vede molto
+				p.x += cos(vAngle)*r;
+				p.z += sin(vAngle)*r;
+			}
+
+			// Cambia opacità in funzione dell'altezza
+			float frac_opacity = customOpacity / timeLife;
+			float opacity = customOpacity - (mod(t-timeOffset,timeLife))*frac_opacity;
+
+			vColor = vec4( customColor, opacity );
+
+			vec4 mvPosition = modelViewMatrix * vec4( p, 1.0 );
+			gl_PointSize = customSize * ( 300.0 / length( mvPosition.xyz ) );
+			gl_Position = projectionMatrix * mvPosition;
+		}
+	</script>
+
+	<script type="x-shader/x-vertex" id="vertex_smoke">
+		uniform vec3  customColor;
+		uniform float customOpacity;
+		attribute float customSize;
+		attribute float customAngle;
+		attribute float timeOffset;
+
+		varying vec4  vColor;
+		varying float vAngle;
+
+		uniform float t;
+		uniform float timeLife;
+		uniform float speed;
+		uniform float posOffset;
+
+		//funzione per generare numeri random
+		highp float rand(vec2 co)
+		{
+		    highp float a = 12.9898;
+		    highp float b = 78.233;
+		    highp float c = 43758.5453;
+		    highp float dt= dot(co.xy ,vec2(a,b));
+		    highp float sn= mod(dt,3.14);
+		    return fract(sin(sn) * c);
+		}
+
+		void main()
+		{		
+			vAngle = customAngle;
+			vec3 p = position; //posizione in x,y,z iniziale
+			//Calcola la posizione al tempo t
+			float radius;
+			if(t-timeOffset > 0.0){
+				p.y += (mod(t-timeOffset,timeLife))*speed+5.0;
+				radius = 0.5*(p.y - position.y)*sin(0.009*(p.y - position.y)*(p.y - position.y));
+				//radius = 5.0*sin(p.y-position.y)+5.0;
+
+				float r = rand(vec2(t,vAngle))*0.9*(radius); // randomicità
+
+				p.x += (radius-r)*cos(p.y-position.y)+2.0*sin((p.y-position.y));
+				p.z += (radius-r)*sin(p.y-position.y);
+
+				//Per regolare la posizione del fumo in base al timeLife del fuoco
+				p.y += posOffset;
+			}
+
+			// Cambia opacità in funzione dell'altezza
+			float frac_opacity = customOpacity / timeLife;
+			float opacity = customOpacity - (mod(t-timeOffset,timeLife))*frac_opacity;
+
+			vColor = vec4( customColor, opacity );
+
+			vec4 mvPosition = modelViewMatrix * vec4( p, 1.0 );
+			gl_PointSize = customSize * ( 300.0 / length( mvPosition.xyz ) );
+			gl_Position = projectionMatrix * mvPosition;
+		}
+	</script>
+
+	<script type="x-shader/x-fragment" id="fragment_flame">
+		uniform sampler2D texture;
+		
+		varying vec4 vColor;
+		varying float vAngle;
+
+		void main()
+		{
+			gl_FragColor = vColor;
+			float c = cos(vAngle);
+			float s = sin(vAngle);
+			vec2 circCoord = 2.0 * gl_PointCoord - 1.0;
+			if (dot(circCoord, circCoord) > 1.0) {
+    			discard;
+			}
+			vec2 rotatedUV = vec2(c * (gl_PointCoord.x - 0.5) + s * (gl_PointCoord.y - 0.5) + 0.5,
+			c * (gl_PointCoord.y - 0.5) - s * (gl_PointCoord.x - 0.5) + 0.5);
+			vec4 rotatedTexture = texture2D( texture,  rotatedUV );
+			if(rotatedTexture.a < 0.3){
+				discard;
+			}
+			gl_FragColor = gl_FragColor * rotatedTexture;
+		}
+	</script>
+
+	<script type="x-shader/x-fragment" id="fragment_smoke">
+		uniform sampler2D texture;
+		
+		varying vec4 vColor;
+		varying float vAngle;
+
+		void main()
+		{
+			gl_FragColor = vColor;
+			float c = cos(vAngle);
+			float s = sin(vAngle);
+			vec2 circCoord = 2.0 * gl_PointCoord - 1.0;
+			if (dot(circCoord, circCoord) > 1.0) {
+    			discard;
+			}
+			vec2 rotatedUV = vec2(c * (gl_PointCoord.x - 0.5) + s * (gl_PointCoord.y - 0.5) + 0.5,
+			c * (gl_PointCoord.y - 0.5) - s * (gl_PointCoord.x - 0.5) + 0.5);
+			vec4 rotatedTexture = texture2D( texture,  rotatedUV );
+			if(rotatedTexture.a < 0.3){
+				discard;
+			}
+			gl_FragColor = gl_FragColor * rotatedTexture;
+		}
+	</script>
+
+	
+	<div id="WebGL" style="position: absolute; left:0px; top:0px"></div>
+	<script src="js/Candela.js"></script>
+
+	<script src="js/three.min.js"></script>
+
+	<script src="js/Detector.js"></script>
+	<script src="js/Stats.js"></script>
+	<script src="js/THREEx.KeyboardState.js"></script>
+	<script src="js/THREEx.FullScreen.js"></script>
+	<script src="js/THREEx.WindowResize.js"></script>
+
+	<script src="js/loaders/MTLLoader.js"></script>
+	<script src="js/loaders/OBJLoader.js"></script>
+
+	<script type='text/javascript' src='js/DAT.GUI.min.js'></script>
+
+	<script>
+		if(mobile()){
+			console.log('Mobile Device');
+			document.write("<script src='js/OrbitControls-Touch.js'><\/script>");
+		} else{
+			console.log('Desktop Device');
+			document.write("<script src='js/OrbitControls.js'><\/script>");
+		}
+	</script>
+</body>
+</html>
