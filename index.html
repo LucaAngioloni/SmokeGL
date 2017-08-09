@@ -103,13 +103,16 @@
 			vAngle = customAngle;
 			vec3 p = position; //posizione in x,y,z iniziale
 			//Calcola la posizione al tempo t
+			float radius;
 			if(t-timeOffset > 0.0){
-				p.y += (mod(t-timeOffset,timeLife))*speed;
+				p.y += (mod(t-timeOffset,timeLife))*speed+5.0;
+				radius = 0.5*(p.y - position.y)*sin(0.009*(p.y - position.y)*(p.y - position.y));
+				//radius = 5.0*sin(p.y-position.y)+5.0;
 
-				float r = rand(vec2(t,vAngle))*0.9*(p.y - position.y); // randomicità
+				float r = rand(vec2(t,vAngle))*0.9*(radius); // randomicità
 
-				p.x += (p.y - position.y - r)*0.2*cos(2.0*customAngle);
-				p.z += (p.y - position.y - r)*0.2*sin(2.0*customAngle);
+				p.x += (radius-r)*cos(p.y-position.y)+2.0*sin((p.y-position.y));
+				p.z += (radius-r)*sin(p.y-position.y);
 
 				//Per regolare la posizione del fumo in base al timeLife del fuoco
 				p.y += posOffset;
