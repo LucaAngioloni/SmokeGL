@@ -121,7 +121,8 @@
 				float r = rand(vec2(t,vAngle))*0.9*(radius); // randomicità
 
 				//p.x += (radius-r)*cos(p.y-position.y)+(p.y-position.y)*0.1*sin((p.y-position.y));
-				p.x += (radius-r)*cos(p.y-position.y)+(p.y-position.y)*0.1*sin((p.y-position.y))*sin(t);
+				p.x += (radius-r)*cos(p.y-position.y)+(p.y-position.y)*0.1*sin(t*10.0);
+				//oppure con *0.1*sin(t) oppure *sin(t)*sin(t);
 
 				p.z += (radius-r)*sin(p.y-position.y);
 
