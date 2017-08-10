@@ -121,10 +121,10 @@
 				float r = rand(vec2(t,vAngle))*0.9*(radius); // randomicità
 
 				//p.x += (radius-r)*cos(p.y-position.y)+(p.y-position.y)*0.1*sin((p.y-position.y));
-				p.x += (radius-r)*cos(p.y-position.y)+(p.y-position.y)*0.1*sin((p.y-position.y))*sin(t*10.0);
+				p.x += (radius-r)*cos(p.y-position.y)+(p.y-position.y)*0.1*cos(t)*cos(t)+sin(t);
 				//oppure con *0.1*sin(t) oppure *sin(t)*sin(t);
 
-				p.z += (radius-r)*sin(p.y-position.y);
+				p.z += (radius-r)*sin(p.y-position.y)+(p.y-position.y)*0.1*sin((p.y-position.y))*sin(t);
 
 				//Per regolare la posizione del fumo in base al timeLife del fuoco
 				p.y += posOffset;
