@@ -104,19 +104,33 @@
 			vec3 p = position; //posizione in x,y,z iniziale
 			//Calcola la posizione al tempo t
 			float radius;
+			float heightCoeff;
+			float xxx;
 			if(t-timeOffset > 0.0){
-				p.y += (mod(t-timeOffset,timeLife))*speed+5.0;
+
+				heightCoeff = rand(vec2(t,vAngle))*5.0;
+				xxx = rand(vec2(t,vAngle))*1.0;
+				if (xxx > 0.5) {
+					heightCoeff = heightCoeff * -1.0;
+				}
+
+				p.y += (mod(t-timeOffset,timeLife))*speed+10.0;
 				radius = 0.5*(p.y - position.y)*sin(0.009*(p.y - position.y)*(p.y - position.y));
 				//radius = 5.0*sin(p.y-position.y)+5.0;
 
 				float r = rand(vec2(t,vAngle))*0.9*(radius); // randomicità
 
-				p.x += (radius-r)*cos(p.y-position.y)+2.0*sin((p.y-position.y));
+				//p.x += (radius-r)*cos(p.y-position.y)+(p.y-position.y)*0.1*sin((p.y-position.y));
+				p.x += (radius-r)*cos(p.y-position.y)+(p.y-position.y)*0.1*sin((p.y-position.y))*sin(t);
+
 				p.z += (radius-r)*sin(p.y-position.y);
 
 				//Per regolare la posizione del fumo in base al timeLife del fuoco
 				p.y += posOffset;
-			}
+
+				p.y += heightCoeff;
+		
+			}	
 
 			// Cambia opacità in funzione dell'altezza
 			float frac_opacity = customOpacity / timeLife;
