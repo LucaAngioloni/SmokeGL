@@ -114,7 +114,7 @@
 					heightCoeff = heightCoeff * -1.0;
 				}
 
-				p.y += (mod(t-timeOffset,timeLife))*speed+10.0;
+				p.y += (mod(t-timeOffset,timeLife))*speed;
 				radius = 0.5*(p.y - position.y)*sin(0.009*(p.y - position.y)*(p.y - position.y));
 				//radius = 5.0*sin(p.y-position.y)+5.0;
 

@@ -11,9 +11,9 @@ var numSmokeParticles = 100000;
 var maxNumFlameParticles = 40000;
 var maxNumSmokeParticles = 100000;
 var flameStartingHeight = 101;
-var smokeStartingHeight = flameStartingHeight+(flameTTL*Speed) - 5; //Il fumo deve partire dalla punta della fiamma
+var smokeStartingHeight = flameStartingHeight+(flameTTL*Speed)+5; //Il fumo deve partire dalla punta della fiamma
 var flameSize = 7;
-var smokeSize = 4;
+var smokeSize = 5;
 
 var flameSTconst = flameTTL * Speed;
 var smokeSTconst = smokeTTL * Speed;
@@ -34,7 +34,8 @@ function init()
     // SCENE
     scene = new THREE.Scene();
     
-    // CAMERA
+    // 
+
     var SCREEN_WIDTH = window.innerWidth, SCREEN_HEIGHT = window.innerHeight;
     var VIEW_ANGLE = 45, ASPECT = SCREEN_WIDTH / SCREEN_HEIGHT, NEAR = 2, FAR = 5000;
     camera = new THREE.PerspectiveCamera( VIEW_ANGLE, ASPECT, NEAR, FAR);
@@ -61,10 +62,8 @@ function init()
         }
         var key     = "space";
         var pressed = keyboard.pressed(key);
-        //console.log("key", key, "pressed", pressed);
         if(pressed){
             going = !going;
-            //console.log("going", going);
         }
     })
 
@@ -72,6 +71,8 @@ function init()
     controls = new THREE.OrbitControls( camera, renderer.domElement );
     controls.minDistance = 50;
     controls.maxDistance = 500;
+    controls.minHeight = 0;
+    controls.maxPolarAngle = Math.PI/2; 
     controls.center = lookingPosition;
     
     // STATS
@@ -84,7 +85,7 @@ function init()
     // LIGHT
     var light = new THREE.PointLight(0xffffff);
     // light.position.set(100,250,100);
-    light.position.set(0,250,0);
+    light.position.set(0,255,0);
     scene.add(light);
 
     var ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
@@ -212,6 +213,22 @@ function init()
 
     scene.add(flame);
     scene.add(smoke);
+
+    //AUDIO
+
+    //Create an AudioListener and add it to the camera 
+    var listener = new THREE.AudioListener(); 
+    camera.add( listener ); 
+    // create a global audio source 
+    var sound = new THREE.Audio( listener ); 
+    var audioLoader = new THREE.AudioLoader();
+    //Load a sound and set it as the Audio object's buffer 
+    audioLoader.load( 'audio/rains.mp3', function( buffer ) { 
+        sound.setBuffer( buffer ); 
+        sound.setLoop(true); 
+        sound.setVolume(0.5); 
+        sound.play(); 
+    });
 
     // GUI
     
