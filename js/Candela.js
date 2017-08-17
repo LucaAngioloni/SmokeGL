@@ -34,7 +34,7 @@ function init()
     // SCENE
     scene = new THREE.Scene();
     
-    // 
+    // CAMERA
 
     var SCREEN_WIDTH = window.innerWidth, SCREEN_HEIGHT = window.innerHeight;
     var VIEW_ANGLE = 45, ASPECT = SCREEN_WIDTH / SCREEN_HEIGHT, NEAR = 2, FAR = 5000;
@@ -93,9 +93,12 @@ function init()
     
     // LIGHT
     var light = new THREE.PointLight(0xffffff);
-    // light.position.set(100,250,100);
-    light.position.set(0,255,0);
+    light.position.set(0, 555 ,0);
     scene.add(light);
+    var flameLight = new THREE.PointLight(0xe04006);
+    flameLight.position.set(0,flameStartingHeight + 10,0);
+    flameLight.intensity = 0.25;
+    scene.add(flameLight);
 
     var ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
     scene.add(ambientLight);
