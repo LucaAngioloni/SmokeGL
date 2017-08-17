@@ -40,8 +40,13 @@ function init()
     var VIEW_ANGLE = 45, ASPECT = SCREEN_WIDTH / SCREEN_HEIGHT, NEAR = 2, FAR = 5000;
     camera = new THREE.PerspectiveCamera( VIEW_ANGLE, ASPECT, NEAR, FAR);
     scene.add(camera);
-    camera.position.set(0,200,400);
-    var lookingPosition = new THREE.Vector3(scene.position.x, scene.position.y + 100, scene.position.z);
+    if(mobile()){
+        camera.position.set(0,270,450);
+        var lookingPosition = new THREE.Vector3(scene.position.x, scene.position.y + 150, scene.position.z);
+    } else {
+        camera.position.set(0,200,400);
+        var lookingPosition = new THREE.Vector3(scene.position.x, scene.position.y + 100, scene.position.z);
+    }
     
     // RENDERER
     renderer = new THREE.WebGLRenderer( {antialias:true} );
@@ -72,8 +77,12 @@ function init()
     controls.minDistance = 50;
     controls.maxDistance = 500;
     controls.minHeight = 0;
-    controls.maxPolarAngle = Math.PI/2; 
-    controls.center = lookingPosition;
+    controls.maxPolarAngle = Math.PI/2;
+    if (mobile()) {
+        controls.target = lookingPosition;
+    } else {
+        controls.center = lookingPosition;
+    }
     
     // STATS
     stats = new Stats();
@@ -369,7 +378,13 @@ function init()
         }
         flameGeometry.attributes.timeOffset.needsUpdate = true;
     });
-    datGui.open(); 
+
+    if (mobile()) {
+        datGui.close();
+    } else{
+        datGui.open();
+    }
+    
 }
 
 
