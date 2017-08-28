@@ -3,6 +3,7 @@ var flameTTL = 1.7;
 var smokeTTL = 7.4;
 var Speed = 25.0;
 var going = true;
+var newSmokeBool = false;
 var originalAlpha = 0.6;
 var testAlphaFlame = 0.6;
 var testAlphaSmoke = 0.6;
@@ -194,6 +195,7 @@ function init()
         texture: { type: 't', value: new THREE.TextureLoader().load("images/smokeparticle.png") },
         customOpacity: {value: 1.0},
         customColor: {value: smokeColor},
+        newSmoke: {value: 0.0},
         timeLife: {value: smokeTTL},
         speed: {value: Speed},
         posOffset: {value: 0.0},
@@ -257,6 +259,9 @@ function init()
             going = !going;
         }
         this.Speed = Speed;
+        this.newSmoke = function(){
+            newSmokeBool = !newSmokeBool;
+        }
     }; //Valori da cambiare una volta fatto lo shader
 
     datGui = new dat.GUI();  
@@ -356,6 +361,7 @@ function init()
 		uniforms_smoke.customOpacity.value = newValue;
         testAlphaSmoke = originalAlpha * newValue;   
 	});
+    smokeFolder.add(guiControls, 'newSmoke').name("NewSmoke");
 
 
     datGui.add(guiControls, 'toggleMovement').name("ToggleMovement");
@@ -397,6 +403,13 @@ function render(){
         uniforms_flame.t.value += 1.0/60.0;
         uniforms_smoke.t.value += 1.0/60.0;
     }
+
+    if (newSmokeBool) {
+        uniforms_smoke.newSmoke.value = 2.0;
+    } else {
+        uniforms_smoke.newSmoke.value = 0.0;
+    }
+
 
     stats.update(); // aggiorna statistiche
     controls.update(); //aggiorna i controlli della vista e camera

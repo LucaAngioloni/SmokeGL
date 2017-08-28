@@ -75,6 +75,7 @@
 	<script type="x-shader/x-vertex" id="vertex_smoke">
 		uniform vec3  customColor;
 		uniform float customOpacity;
+		uniform float newSmoke;
 		attribute float customSize;
 		attribute float customAngle;
 		attribute float timeOffset;
@@ -127,8 +128,10 @@
 				p.z += (radius-r)*sin(p.y-position.y)+(p.y-position.y)*0.1*sin((p.y-position.y))*sin(t);
 
 				// per rendere il fumo più sottile all'inizio e piu addensato in alto
-				// float diff = p.y-position.y;
-				// p.y  = position.y + diff * (6.0/(mod(t-timeOffset,timeLife) + 1.0));
+				if (newSmoke >= 1.0) {
+					float diff = p.y-position.y;
+					p.y  = position.y + diff * (6.0/(mod(t-timeOffset,timeLife) + 1.0));
+				}
 
 				//Per regolare la posizione del fumo in base al timeLife del fuoco
 				p.y += posOffset;
