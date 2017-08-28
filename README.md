@@ -11,7 +11,9 @@
 
 ### Project introduction
 
-- A particle system is a convenient representation of the natural phenomena
+- A particle system is a convenient representation of a natural phenomena
+- The natural phenomena to be reproduced are Smoke and Flames
+- Creation of a pseudo-realistic scene simulating physics using random factors in the particles motion
 
 #### Smoke
 
@@ -30,9 +32,10 @@
 
 [![Screen_Shot_2017-08-26_at_17.39.36.png](https://s28.postimg.org/uqbqndcgd/Screen_Shot_2017-08-26_at_17.39.36.png)](https://postimg.org/image/v334tjuq1/)
 
-- For the purpose some simplifications are applied
+- The project will be implemented using WebGL
 - Smoke and flame particles will be managed through shaders
-- The scene surrounding smoke and flame will be represented using three.js
+  - The physical model is simplified for this project purposes
+- The scene surrounding smoke and flame will be represented using three.js library
 
 ##### Why [Three.js](https://threejs.org)
 
@@ -218,5 +221,11 @@
 - The system can reproduce different scenario, the only difference would be in formulas describing the event
 
 
+## Presentation
 
-### Developed by Luca Angioloni and Francesco Pegoraro
+A copy of this presentation can be found in different formats here:
+- HTML website: https://lucaangioloni.github.io/SmokeGL/Presentazione/PresentazioneHTML/
+- PDF: https://github.com/LucaAngioloni/SmokeGL/raw/master/Presentazione/Presentazione.pdf
+- Keynote: https://github.com/LucaAngioloni/SmokeGL/raw/master/Presentazione/Presentazione.key
+
+# Developed by [Luca Angioloni](https://github.com/LucaAngioloni/) and [Francesco Pegoraro](https://github.com/SqrtPapere)
