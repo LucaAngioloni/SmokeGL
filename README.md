@@ -227,5 +227,5 @@ A copy of this presentation can be found in different formats here:
 - HTML website: https://lucaangioloni.github.io/SmokeGL/Presentazione/PresentazioneHTML/
 - PDF: https://github.com/LucaAngioloni/SmokeGL/raw/master/Presentazione/Presentazione.pdf
 - Keynote: https://github.com/LucaAngioloni/SmokeGL/raw/master/Presentazione/Presentazione.key
-- 
+
 ### Developed by Luca Angioloni and Francesco Pegoraro
