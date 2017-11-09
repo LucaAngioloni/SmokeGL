@@ -229,3 +229,7 @@ A copy of this presentation can be found in different formats here:
 - Keynote: https://github.com/LucaAngioloni/SmokeGL/raw/master/Presentazione/Presentazione.key
 
 # Developed by [Luca Angioloni](https://github.com/LucaAngioloni/) and [Francesco Pegoraro](https://github.com/SqrtPapere)
+
+## License
+
+[MIT](https://github.com/LucaAngioloni/SmokeGL/blob/master/LICENSE)
