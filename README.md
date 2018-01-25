@@ -1,5 +1,5 @@
 # SmokeGL
-[![Screen_Shot_2017-08-26_at_17.39.04.png](https://s28.postimg.org/obcpqp5ql/Screen_Shot_2017-08-26_at_17.39.04.png)](https://postimg.org/image/w43diobpl/)
+![Screen_Shot_2017-08-26_at_17.39.04.png](./images/Screen_Shot_2017-08-26_at_17.39.04.png)
 ***
 ## Smoke & Flame particles Systems
 
@@ -30,7 +30,7 @@
 
 ### Mockup
 
-[![Screen_Shot_2017-08-26_at_17.39.36.png](https://s28.postimg.org/uqbqndcgd/Screen_Shot_2017-08-26_at_17.39.36.png)](https://postimg.org/image/v334tjuq1/)
+![Screen_Shot_2017-08-26_at_17.39.36.png](./images/Screen_Shot_2017-08-26_at_17.39.36.png)
 
 - The project will be implemented using WebGL
 - Smoke and flame particles will be managed through shaders
@@ -89,7 +89,7 @@
 
 #### Scene
 
-[![Screen_Shot_2017-08-26_at_17.41.29.png](https://s28.postimg.org/pvn3m7kgd/Screen_Shot_2017-08-26_at_17.41.29.png)](https://postimg.org/image/3jpastlc9/)
+![Screen_Shot_2017-08-26_at_17.41.29.png](./images/Screen_Shot_2017-08-26_at_17.41.29.png)
 
 #### Flame formulation
 
@@ -101,7 +101,7 @@
   - x = cos(α)*r
   - z = sin(α)*r
   
-[![Screen_Shot_2017-08-26_at_17.41.39.png](https://s28.postimg.org/gl5xlk3f1/Screen_Shot_2017-08-26_at_17.41.39.png)](https://postimg.org/image/nodt168uh/)
+![Screen_Shot_2017-08-26_at_17.41.39.png](./images/Screen_Shot_2017-08-26_at_17.41.39.png)
 
 #### Flame fragment shader
 
@@ -149,7 +149,7 @@
 
 - High random component is added
  
-[![Screen_Shot_2017-08-26_at_17.42.12.png](https://s28.postimg.org/846famyq5/Screen_Shot_2017-08-26_at_17.42.12.png)](https://postimg.org/image/gz79l5nih/)
+![Screen_Shot_2017-08-26_at_17.42.12.png](./images/Screen_Shot_2017-08-26_at_17.42.12.png)
 
 #### Smoke fragment shader
 
@@ -187,7 +187,7 @@
 ```
 ### Resulting Scene
 
-[![Screen_Shot_2017-08-26_at_17.42.34.png](https://s28.postimg.org/vl3c6iqml/Screen_Shot_2017-08-26_at_17.42.34.png)](https://postimg.org/image/henlbafrd/)
+![Screen_Shot_2017-08-26_at_17.42.34.png](./images/Screen_Shot_2017-08-26_at_17.42.34.png)
 
 ### Mobile Ready
 
@@ -195,7 +195,7 @@
 - The project has been made mobile ready with touch event controls and great performances.
 - Even on older generation devices ~60 fps are rendered.
 
-[![Screen_Shot_2017-08-26_at_17.42.56.png](https://s28.postimg.org/5o4lwsgnh/Screen_Shot_2017-08-26_at_17.42.56.png)](https://postimg.org/image/3wbn1vxah/)
+![Screen_Shot_2017-08-26_at_17.42.56.png](./images/Screen_Shot_2017-08-26_at_17.42.56.png)
 
 ### Performances
 
